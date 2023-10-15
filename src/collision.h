@@ -2,8 +2,7 @@
 #include "vector2.h"
 
 struct Circle {
-	float X;
-	float Y;
+	Vector2<float> position;
 	float radius;
 };
 

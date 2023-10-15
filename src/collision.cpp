@@ -18,8 +18,8 @@ AABB AABB::makeFromPositionSize(float x, float y, float w, float h) {
 }
 
 bool CircleIntersect(Circle& circleA, Circle& circleB) {
-	float dx = circleB.X - circleA.X;
-	float dy = circleB.Y - circleA.Y;
+	float dx = circleB.position.x - circleA.position.x;
+	float dy = circleB.position.y - circleA.position.y;
 
 	float distanceSquared = dx * dx + dy * dy;
 	float distance = sqrt(distanceSquared);
@@ -48,11 +48,11 @@ float Clamp(float a, float min, float max) {
 }
 
 bool AABBCircleIntersect(AABB& box, Circle& circle) {
-	float clampedX = Clamp(circle.X, box.xMin, box.xMax);
-	float clampedY = Clamp(circle.Y, box.yMin, box.yMax);
+	float clampedX = Clamp(circle.position.x, box.xMin, box.xMax);
+	float clampedY = Clamp(circle.position.y, box.yMin, box.yMax);
 
-	float deltaX = circle.X - clampedX;
-	float deltaY = circle.Y - clampedY;
+	float deltaX = circle.position.x - clampedX;
+	float deltaY = circle.position.y - clampedY;
 
 	float distanceSquared = deltaX * deltaX + deltaY * deltaY;
 	float distance = sqrt(distanceSquared);

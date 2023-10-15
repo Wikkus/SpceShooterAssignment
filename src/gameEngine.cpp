@@ -1,20 +1,39 @@
 #include "gameEngine.h"
 
 #include "debugDrawer.h"
+#include "enemyManager.h"
 #include "imGuiManager.h"
+#include "playerCharacter.h"
 
 #include <vector>
 
 SDL_Window* window;
 SDL_Renderer* renderer;
 
+EnemyManager* enemyManager;
 std::shared_ptr<DebugDrawer> debugDrawer;
 std::shared_ptr<ImGuiHandler> imGuiHandler;
+PlayerCharacter* playerCharacter;
+ProjectileManager* projectileManager;
 
 float windowHeight = 600.f;
 float windowWidth = 800.f;
 
+MouseButtonState mouseButtons[6];
+
 KeyState keys[SDL_NUM_SCANCODES];
+bool GetMouseButton(Uint8 button) {
+	return mouseButtons[button].state;
+}
+
+bool GetMouseButtonPressed(Uint8 button) {
+	return mouseButtons[button].state && mouseButtons[button].changeFrame == frameNumber;
+}
+
+bool GetMouseButtonReleased(Uint8 button) {
+	return !mouseButtons[button].state && mouseButtons[button].changeFrame == frameNumber;
+}
+
 bool GetKey(SDL_Scancode key) {
 	return keys[key].state;
 }

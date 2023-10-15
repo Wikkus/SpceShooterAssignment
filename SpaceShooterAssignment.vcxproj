@@ -30,9 +30,15 @@
     <ClCompile Include="include\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\collision.cpp" />
+    <ClCompile Include="src\dataStructuresAndMethods.cpp" />
     <ClCompile Include="src\debugDrawer.cpp" />
+    <ClCompile Include="src\enemyManager.cpp" />
     <ClCompile Include="src\gameEngine.cpp" />
     <ClCompile Include="src\imGuiManager.cpp" />
+    <ClCompile Include="src\lesserEnemy.cpp" />
+    <ClCompile Include="src\playerCharacter.cpp" />
+    <ClCompile Include="src\projectile.cpp" />
+    <ClCompile Include="src\projectileManager.cpp" />
     <ClCompile Include="src\sprite.cpp" />
     <ClCompile Include="src\spriteSheet.cpp" />
     <ClCompile Include="src\textSprite.cpp" />
@@ -142,9 +148,15 @@
     <ClInclude Include="include\SDL2\SDL_video.h" />
     <ClInclude Include="include\SDL2\SDL_vulkan.h" />
     <ClInclude Include="src\collision.h" />
+    <ClInclude Include="src\dataStructuresAndMethods.h" />
     <ClInclude Include="src\debugDrawer.h" />
+    <ClInclude Include="src\enemyManager.h" />
     <ClInclude Include="src\gameEngine.h" />
     <ClInclude Include="src\imGuiManager.h" />
+    <ClInclude Include="src\lesserEnemy.h" />
+    <ClInclude Include="src\playerCharacter.h" />
+    <ClInclude Include="src\projectile.h" />
+    <ClInclude Include="src\projectileManager.h" />
     <ClInclude Include="src\sprite.h" />
     <ClInclude Include="src\spriteSheet.h" />
     <ClInclude Include="src\textSprite.h" />
@@ -247,7 +259,7 @@
       <PreprocessorDefinitions>SDL_MAIN_HANDLED;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;$(SolutionDir)/src;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

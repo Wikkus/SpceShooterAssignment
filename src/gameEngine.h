@@ -11,13 +11,19 @@
 #define eulersNumber 2.71828
 
 class DebugDrawer;
+class EnemyManager;
 class ImGuiHandler;
+class PlayerCharacter;
+class ProjectileManager;
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 
+extern EnemyManager* enemyManager;
 extern std::shared_ptr<DebugDrawer> debugDrawer;
 extern std::shared_ptr<ImGuiHandler> imGuiHandler;
+extern PlayerCharacter* playerCharacter;
+extern ProjectileManager* projectileManager;
 
 extern float windowHeight;
 extern float windowWidth;
@@ -26,6 +32,16 @@ struct KeyState {
 	bool state = false;
 	int changeFrame = 0;
 };
+
+struct MouseButtonState {
+	bool state = false;
+	int changeFrame = 0;
+};
+
+extern MouseButtonState mouseButtons[6];
+extern bool GetMouseButton(Uint8 button);
+extern bool GetMouseButtonPressed(Uint8 button);
+extern bool GetMouseButtonReleased(Uint8 button);
 
 extern KeyState keys[SDL_NUM_SCANCODES];
 extern bool GetKey(SDL_Scancode key);

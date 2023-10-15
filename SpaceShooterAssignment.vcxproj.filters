@@ -70,6 +70,24 @@
     <ClCompile Include="src\vector2.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\playerCharacter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\projectile.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dataStructuresAndMethods.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\projectileManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lesserEnemy.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemyManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\gameEngine.h">
@@ -400,6 +418,24 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\vector2.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\projectile.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\playerCharacter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dataStructuresAndMethods.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\projectileManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lesserEnemy.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enemyManager.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
