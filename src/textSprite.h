@@ -11,6 +11,8 @@ class TextSprite {
 public:
 	void Init(const char* fontType, int fontSize, const char* text, SDL_Color color);
 
+	void ChangeText(const char* text, SDL_Color color);
+
 	void SetPosition(Vector2<float> position);
 
 	void ClearText();

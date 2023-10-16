@@ -1,9 +1,12 @@
 #include "playerCharacter.h"
 
 #include "dataStructuresAndMethods.h"
+#include "enemyManager.h"
 #include "gameEngine.h"
 #include "projectile.h"
 #include "projectileManager.h"
+
+#include <string>
 
 PlayerCharacter::PlayerCharacter(const char* spritePath, float characterOrientation, Vector2<float> characterPosition) {
 	_characterSprite = new Sprite();	
@@ -12,15 +15,23 @@ PlayerCharacter::PlayerCharacter(const char* spritePath, float characterOrientat
 	_orientation = characterOrientation;
 	_position = characterPosition;
 	_oldPosition = _position;
+
+	_currentHealth = _maxHealth;
+
+	_healthTextSprite = new TextSprite();
+	_healthTextSprite->SetPosition(Vector2<float>(windowWidth * 0.05f, windowHeight * 0.9f));
 }
 
 PlayerCharacter::~PlayerCharacter() {
 	_characterSprite = nullptr;
 	delete _characterSprite;
+
+	_healthTextSprite = nullptr;
+	delete _healthTextSprite;
 }
 
 void PlayerCharacter::Init() {
-
+	_healthTextSprite->Init("res/roboto.ttf", 24, std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
 }
 
 void PlayerCharacter::Update() {
@@ -33,9 +44,31 @@ void PlayerCharacter::Render() {
 	_characterSprite->RenderWithOrientation(_position, _orientation);
 }
 
+void PlayerCharacter::RenderText() {
+	_healthTextSprite->Render();
+}
+
+void PlayerCharacter::TakeDamage(unsigned int damageAmount) {
+	_currentHealth -= damageAmount;
+	
+	_healthTextSprite->ChangeText(std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
+	if (_currentHealth <= 0) {
+		ExecuteDeath();
+	}
+}
+
+void PlayerCharacter::ExecuteDeath() {
+	_position = Vector2<float>(windowWidth * 0.5f, windowHeight * 0.5f);
+	_orientation = 0.f;
+
+	_currentHealth = _maxHealth;
+	_healthTextSprite->ChangeText(std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
+
+	enemyManager->RemoveAllEnemies();
+}
+
 void PlayerCharacter::FireProjectile() {
-	Projectile* projectile = new Projectile("res/sprites/FireBall.png", 8.f, _orientation, _direction, _position);
-	projectileManager->CreateProjectile(projectile);
+	projectileManager->CreateProjectile(new Projectile("res/sprites/FireBall.png", 8.f, _orientation, 10, _direction, _position));
 }
 
 void PlayerCharacter::UpdateInput() {
@@ -84,10 +117,14 @@ Sprite* PlayerCharacter::GetSprite() {
 	return _characterSprite;
 }
 
-float PlayerCharacter::GetOrientation() {
+const float PlayerCharacter::GetOrientation() const {
 	return _orientation;
 }
 
-Vector2<float> PlayerCharacter::GetPosition() {
+const int PlayerCharacter::GetCurrentHealth() const {
+	return _currentHealth;
+}
+
+const Vector2<float> PlayerCharacter::GetPosition() const {
 	return _position;
 }

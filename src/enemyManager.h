@@ -22,8 +22,15 @@ public:
 
 	void CreateEnemy(EnemyType enemyType, LesserEnemy* lesserEnemy);
 
+	void RemoveAllEnemies();
+	void RemoveEnemy(unsigned int enemyIndex);
+
+	void TakeDamage(unsigned int enemyIndex, unsigned int damageAmount);
+
+	std::vector<LesserEnemy*> GetEnemies();
+
 private:
-	std::vector<LesserEnemy*> _lesserEnemies;
+	std::vector<LesserEnemy*> _allEnemies;
 
 };
 

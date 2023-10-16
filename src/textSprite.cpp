@@ -9,6 +9,11 @@ void TextSprite::Init(const char* fontType, int fontSize, const char* text, SDL_
 	_textTexture = SDL_CreateTextureFromSurface(renderer, _textSurface);
 }
 
+void TextSprite::ChangeText(const char* text, SDL_Color color) {
+	_textSurface = TTF_RenderText_Solid(_font, text, color);
+	_textTexture = SDL_CreateTextureFromSurface(renderer, _textSurface);
+}
+
 void TextSprite::SetPosition(Vector2<float> position) {
 	_posX = position.x;
 	_posY = position.y;

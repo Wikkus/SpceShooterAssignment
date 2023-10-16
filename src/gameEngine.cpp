@@ -59,4 +59,4 @@ float deltaTime = 0.f;
 int frameNumber = 0;
 
 std::random_device randomDevice;
-std::mt19937 randomEngine;
+std::mt19937 randomEngine(randomDevice());

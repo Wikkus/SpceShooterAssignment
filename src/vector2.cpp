@@ -94,7 +94,15 @@ Vector2<T> Vector2<T>::normalized() const{
 }
 template<typename T>
 T Vector2<T>::absolute() const{
-	return sqrt(pow(x, 2) + pow(y, 2));
+	return sqrt((x * x) + (y * y));
+}
+template<typename T>
+T Vector2<T>::distanceBetweenVectors(Vector2 vectorA, Vector2 vectorB) {
+	T temp = vectorA.x - vectorB.x;
+	T temp2 = vectorA.y - vectorB.y;
+
+	return sqrt(((vectorA.x - vectorB.x) * (vectorA.x - vectorB.x)) +
+		((vectorA.y - vectorB.y) * (vectorA.y - vectorB.y)));
 }
 template<typename T>
 T Vector2<T>::dotProduct(const Vector2<T> &left, const Vector2<T> &right){

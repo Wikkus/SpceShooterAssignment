@@ -40,11 +40,13 @@ int main(int argc, char* argv[]) {
 	playerCharacter = new PlayerCharacter("res/sprites/CoralineDadKing.png", 
 		0.f, Vector2<float>(windowWidth * 0.5f, windowHeight * 0.5f));
 
-	imGuiHandler->Init();
-	projectileManager->Init();
 	enemyManager->Init();
+	imGuiHandler->Init();
+	playerCharacter->Init();
+	projectileManager->Init();
 
-	enemyManager->CreateEnemy(EnemyType::LesserEnemy, new LesserEnemy("res/sprites/CoralineDadFigher.png", 0.f, Vector2<float>(300.f, 300.f)));
+	const float spawnCooldown = 3.f;
+	float spawnTimer = 0.f;
 
 	Uint64 previous_ticks = SDL_GetPerformanceCounter();
 	bool running = true;
@@ -104,6 +106,18 @@ int main(int argc, char* argv[]) {
 		playerCharacter->Update();
 		projectileManager->Update();
 
+		if (spawnTimer > 0) {
+			spawnTimer -= deltaTime;
+		} else {
+			spawnTimer = spawnCooldown;
+			
+			std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
+			std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
+
+			enemyManager->CreateEnemy(EnemyType::LesserEnemy, new LesserEnemy("res/sprites/CoralineDadFigher.png", 0.f, Vector2<float>(distX(randomEngine), distY(randomEngine))));
+
+		}
+
 		SDL_SetRenderDrawColor(renderer, 0, 125, 0, 255);
 		SDL_RenderClear(renderer);
 
@@ -112,6 +126,8 @@ int main(int argc, char* argv[]) {
 		playerCharacter->Render();
 		projectileManager->Render();
 		
+		playerCharacter->RenderText();
+
 		debugDrawer->DrawBoxes();
 		debugDrawer->DrawCircles();
 		debugDrawer->DrawLines();

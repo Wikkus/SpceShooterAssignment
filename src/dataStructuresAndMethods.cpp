@@ -1,6 +1,10 @@
 #include "dataStructuresAndMethods.h"
 #include "gameEngine.h"
 
+bool IsInDistance(Vector2<float> positionA, Vector2<float> positionB, float distance) {
+	return Vector2<float>::distanceBetweenVectors(positionA, positionB) <= distance;
+}
+
 bool OutOfBorderX(float positionX) {
 	return positionX < 0.f || positionX > windowWidth;
 }

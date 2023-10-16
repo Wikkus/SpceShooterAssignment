@@ -6,16 +6,21 @@
 class Projectile {
 public:
 	Projectile(const char* spritePath, float collisionRadius, float projectileOrientation, 
-		Vector2<float> projectileDirection, Vector2<float> projectilePosition);
+		unsigned int projectileDamage, Vector2<float> projectileDirection, Vector2<float> projectilePosition);
 	~Projectile();
 
 	void Init();
 	void Update();
 	void Render();
 
+	const Circle GetCollider() const;
+
+	float GetOrientation(); 
+
+	const unsigned int GetProjectileDamage() const;
+
 	Sprite* GetSprite();
 
-	float GetOrientation();
 	Vector2<float> GetPosition();
 
 private:
@@ -25,6 +30,8 @@ private:
 	const float _spriteCollisionOffset = 8.f;
 	
 	float _orientation = 0.f;
+
+	unsigned int _projectileDamage;
 
 	Sprite* _projectileSprite = nullptr;
 	

@@ -14,10 +14,14 @@ public:
 
 	void CreateProjectile(Projectile* projectile);
 
+	void CheckCollision();
 
+	void RemoveProjectile(unsigned int projectileIndex);
 
 private:
 	std::vector<Projectile*> _activeProjectiles;
+	Circle _intersectedCollider;
+	Circle _currentCollider;
 
 };
 

@@ -1,6 +1,10 @@
 #include "projectileManager.h"
 
-#include <dataStructuresAndMethods.h>
+#include "dataStructuresAndMethods.h"
+#include "enemyManager.h"
+#include "gameEngine.h"
+#include "lesserEnemy.h"
+
 
 ProjectileManager::ProjectileManager() {}
 
@@ -30,6 +34,7 @@ void ProjectileManager::Update() {
 			_activeProjectiles.pop_back();
 		}
 	}
+	CheckCollision();
 }
 
 void ProjectileManager::Render() {
@@ -41,4 +46,27 @@ void ProjectileManager::Render() {
 void ProjectileManager::CreateProjectile(Projectile* projectile) {
 	_activeProjectiles.emplace_back(projectile);
 	projectile->Init();
+}
+
+void ProjectileManager::CheckCollision() {
+	for (unsigned i = 0; i < enemyManager->GetEnemies().size(); i++) {
+		_intersectedCollider = enemyManager->GetEnemies()[i]->GetCollider();
+
+		for (unsigned int k = 0; k < _activeProjectiles.size(); k++) {
+			_currentCollider = _activeProjectiles[k]->GetCollider();
+
+			if (CircleIntersect(_currentCollider, _intersectedCollider)) {
+				enemyManager->TakeDamage(i, _activeProjectiles[k]->GetProjectileDamage());
+				RemoveProjectile(k);
+			}
+		}
+	}
+}
+
+void ProjectileManager::RemoveProjectile(unsigned int projectileIndex) {
+	_activeProjectiles[projectileIndex] = nullptr;
+	delete _activeProjectiles[projectileIndex];
+	std::swap(_activeProjectiles[projectileIndex], _activeProjectiles.back());
+	_activeProjectiles.pop_back();
+
 }

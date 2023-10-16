@@ -54,6 +54,9 @@ public:
 	 * @return The lenght of this vector
 	 */
 	T absolute() const;
+	
+	static T distanceBetweenVectors(Vector2 vectorA, Vector2 vectorB);
+		
 	/**
 	 * @brief Calculate the dot product of two vetors.
 	 * @details The dot product is the product of the vector in the
