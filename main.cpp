@@ -11,14 +11,16 @@
 #include "ImGui/imgui_impl_sdl.h"
 
 #include "src/debugDrawer.h"
+#include "src/enemyBase.h"
+#include "src/enemyFighter.h"
 #include "src/enemyManager.h"
 #include "src/gameEngine.h"
 #include "src/ImGuiManager.h"
-#include "src/lesserEnemy.h"
 #include "src/playerCharacter.h"
 #include "src/projectileManager.h"
 #include "src/sprite.h"
 #include "src/spriteSheet.h"
+#include "src/timerManager.h"
 #include "src/textSprite.h"
 #include "src/vector2.h"
 
@@ -39,14 +41,15 @@ int main(int argc, char* argv[]) {
 	projectileManager = new ProjectileManager();
 	playerCharacter = new PlayerCharacter("res/sprites/CoralineDadKing.png", 
 		0.f, Vector2<float>(windowWidth * 0.5f, windowHeight * 0.5f));
+	timerManager = new TimerManager();
+
 
 	enemyManager->Init();
 	imGuiHandler->Init();
 	playerCharacter->Init();
 	projectileManager->Init();
 
-	const float spawnCooldown = 3.f;
-	float spawnTimer = 0.f;
+	Timer* spawnTimer = timerManager->CreateTimer(2.f);
 
 	Uint64 previous_ticks = SDL_GetPerformanceCounter();
 	bool running = true;
@@ -59,7 +62,6 @@ int main(int argc, char* argv[]) {
 		const Uint64 delta_ticks = ticks - previous_ticks;
 		previous_ticks = ticks;
 		deltaTime = (float)delta_ticks / (float)SDL_GetPerformanceFrequency();
-
 
 		SDL_Event eventType;
 		while (SDL_PollEvent(&eventType)) {
@@ -105,17 +107,15 @@ int main(int argc, char* argv[]) {
 		enemyManager->Update();
 		playerCharacter->Update();
 		projectileManager->Update();
+		timerManager->Update();
 
-		if (spawnTimer > 0) {
-			spawnTimer -= deltaTime;
-		} else {
-			spawnTimer = spawnCooldown;
-			
+		if (spawnTimer->GetTimerFinished()) {
 			std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
 			std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
 
-			enemyManager->CreateEnemy(EnemyType::LesserEnemy, new LesserEnemy("res/sprites/CoralineDadFigher.png", 0.f, Vector2<float>(distX(randomEngine), distY(randomEngine))));
-
+			enemyManager->CreateEnemy(EnemyType::EnemyFighter, Vector2<float>(distX(randomEngine), distY(randomEngine)));
+			enemyManager->CreateEnemy(EnemyType::EnemyWizard, Vector2<float>(distX(randomEngine), distY(randomEngine)));
+			spawnTimer->ResetTimer();
 		}
 
 		SDL_SetRenderDrawColor(renderer, 0, 125, 0, 255);

@@ -3,6 +3,7 @@
 
 #include <vector>
 
+
 class ProjectileManager {
 public:
 	ProjectileManager();
@@ -14,9 +15,12 @@ public:
 
 	void CreateProjectile(Projectile* projectile);
 
-	void CheckCollision();
+	bool CheckCollision(unsigned int projectileIndex);
+
+	void RemoveAllProjectiles();
 
 	void RemoveProjectile(unsigned int projectileIndex);
+
 
 private:
 	std::vector<Projectile*> _activeProjectiles;

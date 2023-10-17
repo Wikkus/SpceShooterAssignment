@@ -1,15 +1,16 @@
 #pragma once
-
+#include "vector2.h"
 
 #include <vector>
 
 enum class EnemyType {
-	LesserEnemy, 
+	EnemyFighter, 
+	EnemyWizard,
 	Count
 };
 
-
-class LesserEnemy;
+class EnemyBase;
+class EnemyFighter;
 
 class EnemyManager {
 public:
@@ -20,17 +21,16 @@ public:
 	void Update();
 	void Render();
 
-	void CreateEnemy(EnemyType enemyType, LesserEnemy* lesserEnemy);
+	void CreateEnemy(EnemyType enemyType, Vector2<float> position);
 
 	void RemoveAllEnemies();
 	void RemoveEnemy(unsigned int enemyIndex);
 
 	void TakeDamage(unsigned int enemyIndex, unsigned int damageAmount);
 
-	std::vector<LesserEnemy*> GetEnemies();
+	std::vector<EnemyBase*> GetAllEnemies();
 
 private:
-	std::vector<LesserEnemy*> _allEnemies;
-
+	std::vector<EnemyBase*> _allEnemies;
 };
 

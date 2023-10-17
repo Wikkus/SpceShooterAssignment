@@ -1,7 +1,10 @@
 #pragma once
+#include "collision.h"
 #include "textSprite.h"
 #include "sprite.h"
 #include "vector2.h"
+
+class Timer;
 
 class PlayerCharacter {
 public:
@@ -22,6 +25,8 @@ public:
 	void UpdateMovement();
 	void UpdateTarget();
 
+	const Circle GetCircleCollider() const;
+
 	Sprite* GetSprite();
 
 	const float GetOrientation() const;	
@@ -31,18 +36,21 @@ public:
 	const Vector2<float> GetPosition() const;
 
 private:
-	const float _attackCooldown = 0.5f;
+	Circle _circleCollider;
+
+	const float _attackDamage = 10;
 	const float _movementSpeed = 100.f;
 
 	const int _maxHealth = 100;
 
-	float _attackTimer = 0.f;
 	float _orientation = 0.f;
 
 	int _currentHealth = 0;
 
 	Sprite* _characterSprite = nullptr;
 	TextSprite* _healthTextSprite = nullptr;
+
+	Timer* _attackTimer = nullptr;
 
 	Vector2<float> _position = Vector2<float>(0.f, 0.f);
 	Vector2<float> _oldPosition = Vector2<float>(0.f, 0.f);

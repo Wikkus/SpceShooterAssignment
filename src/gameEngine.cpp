@@ -4,6 +4,7 @@
 #include "enemyManager.h"
 #include "imGuiManager.h"
 #include "playerCharacter.h"
+#include "timerManager.h"
 
 #include <vector>
 
@@ -15,6 +16,7 @@ std::shared_ptr<DebugDrawer> debugDrawer;
 std::shared_ptr<ImGuiHandler> imGuiHandler;
 PlayerCharacter* playerCharacter;
 ProjectileManager* projectileManager;
+TimerManager* timerManager;
 
 float windowHeight = 600.f;
 float windowWidth = 800.f;

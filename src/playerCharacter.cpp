@@ -1,10 +1,12 @@
 #include "playerCharacter.h"
 
 #include "dataStructuresAndMethods.h"
+#include "debugDrawer.h"
 #include "enemyManager.h"
 #include "gameEngine.h"
 #include "projectile.h"
 #include "projectileManager.h"
+#include "timerManager.h"
 
 #include <string>
 
@@ -17,6 +19,9 @@ PlayerCharacter::PlayerCharacter(const char* spritePath, float characterOrientat
 	_oldPosition = _position;
 
 	_currentHealth = _maxHealth;
+
+	_circleCollider.position = characterPosition;
+	_circleCollider.radius = 16.f;
 
 	_healthTextSprite = new TextSprite();
 	_healthTextSprite->SetPosition(Vector2<float>(windowWidth * 0.05f, windowHeight * 0.9f));
@@ -32,6 +37,7 @@ PlayerCharacter::~PlayerCharacter() {
 
 void PlayerCharacter::Init() {
 	_healthTextSprite->Init("res/roboto.ttf", 24, std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
+	_attackTimer = timerManager->CreateTimer(0.5f);
 }
 
 void PlayerCharacter::Update() {
@@ -65,21 +71,19 @@ void PlayerCharacter::ExecuteDeath() {
 	_healthTextSprite->ChangeText(std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
 
 	enemyManager->RemoveAllEnemies();
+	projectileManager->RemoveAllProjectiles();
 }
 
 void PlayerCharacter::FireProjectile() {
-	projectileManager->CreateProjectile(new Projectile("res/sprites/FireBall.png", 8.f, _orientation, 10, _direction, _position));
+	projectileManager->CreateProjectile(new Projectile("res/sprites/FireBall.png", DamageType::DamageEnemy, _orientation, _attackDamage, _direction, _position));
 }
 
 void PlayerCharacter::UpdateInput() {
-	if (_attackTimer <= 0.f) {
+	if (_attackTimer->GetTimerFinished()) {
 		if (GetMouseButton(SDL_BUTTON_LEFT)) {
 			FireProjectile();
-			_attackTimer = _attackCooldown;
+			_attackTimer->ResetTimer();
 		}
-	}
-	if (_attackTimer > 0.f) {
-		_attackTimer -= deltaTime;
 	}
 }
 
@@ -105,12 +109,18 @@ void PlayerCharacter::UpdateMovement() {
 	if (OutOfBorderY(_position.y)) {
 		_position.y = _oldPosition.y;
 	}
+	_circleCollider.position = _position;
+	debugDrawer->AddDebugCircle(_position, _circleCollider.radius);
 }
 
 void PlayerCharacter::UpdateTarget() {
 	_direction = GetMousePosition() - _position;
 	_orientation = VectorAsOrientation(_direction);
 
+}
+
+const Circle PlayerCharacter::GetCircleCollider() const {
+	return _circleCollider;
 }
 
 Sprite* PlayerCharacter::GetSprite() {

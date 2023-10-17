@@ -1,6 +1,8 @@
 #include "enemyManager.h"
 
-#include "lesserEnemy.h"
+#include "enemyBase.h"
+#include "enemyFighter.h"
+#include "enemyWizard.h"
 
 EnemyManager::EnemyManager() {}
 
@@ -28,17 +30,19 @@ void EnemyManager::Render() {
 	}
 }
 
-void EnemyManager::CreateEnemy(EnemyType enemyType, LesserEnemy* lesserEnemy) {
+void EnemyManager::CreateEnemy(EnemyType enemyType, Vector2<float> position) {
 	switch (enemyType) {
-	case EnemyType::LesserEnemy:
-		_allEnemies.emplace_back(lesserEnemy);
-		lesserEnemy->Init();
+	case EnemyType::EnemyFighter:
+		_allEnemies.emplace_back(new EnemyFighter("res/sprites/CoralineDadFighter.png", 30, position));
 		break;
 
+	case EnemyType::EnemyWizard:
+		_allEnemies.emplace_back(new EnemyWizard("res/sprites/CoralineDadWizard.png", 20, position));
+		break;
 	default:
 		break;
 	}
-	
+	_allEnemies.back()->Init();
 }
 
 void EnemyManager::RemoveAllEnemies() {
@@ -61,6 +65,6 @@ void EnemyManager::TakeDamage(unsigned int enemyIndex, unsigned int damageAmount
 	}
 }
 
-std::vector<LesserEnemy*> EnemyManager::GetEnemies() {
+std::vector<EnemyBase*> EnemyManager::GetAllEnemies() {
 	return _allEnemies;
 }

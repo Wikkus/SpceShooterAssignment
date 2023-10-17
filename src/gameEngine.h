@@ -15,6 +15,7 @@ class EnemyManager;
 class ImGuiHandler;
 class PlayerCharacter;
 class ProjectileManager;
+class TimerManager;
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
@@ -24,6 +25,7 @@ extern std::shared_ptr<DebugDrawer> debugDrawer;
 extern std::shared_ptr<ImGuiHandler> imGuiHandler;
 extern PlayerCharacter* playerCharacter;
 extern ProjectileManager* projectileManager;
+extern TimerManager* timerManager;
 
 extern float windowHeight;
 extern float windowWidth;

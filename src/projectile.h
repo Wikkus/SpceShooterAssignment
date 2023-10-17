@@ -3,9 +3,15 @@
 #include "sprite.h"
 #include "vector2.h"
 
+enum class DamageType {
+	DamageEnemy,
+	DamagePlayer,
+	Count
+};
+
 class Projectile {
 public:
-	Projectile(const char* spritePath, float collisionRadius, float projectileOrientation, 
+	Projectile(const char* spritePath, DamageType damageType, float projectileOrientation, 
 		unsigned int projectileDamage, Vector2<float> projectileDirection, Vector2<float> projectilePosition);
 	~Projectile();
 
@@ -14,6 +20,8 @@ public:
 	void Render();
 
 	const Circle GetCollider() const;
+
+	const DamageType GetDamageType() const;
 
 	float GetOrientation(); 
 
@@ -28,7 +36,9 @@ private:
 
 	const float _projectileSpeed = 200.f;
 	const float _spriteCollisionOffset = 8.f;
-	
+
+	DamageType _damageType = DamageType::Count;
+		
 	float _orientation = 0.f;
 
 	unsigned int _projectileDamage;

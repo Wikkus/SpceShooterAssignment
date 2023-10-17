@@ -1,11 +1,11 @@
 #include "projectile.h"
 
 #include "debugDrawer.h"
+#include "enemyFighter.h"
 #include "enemyManager.h"
 #include "gameEngine.h"
-#include "lesserEnemy.h"
 
-Projectile::Projectile(const char* spritePath, float collisionRadius, float projectileOrientation,
+Projectile::Projectile(const char* spritePath, DamageType damageType, float projectileOrientation,
 	unsigned int projectileDamage, Vector2<float> projectileDirection, Vector2<float> projectilePosition) {
 	_projectileSprite = new Sprite();
 	_projectileSprite->Load(spritePath);
@@ -17,7 +17,9 @@ Projectile::Projectile(const char* spritePath, float collisionRadius, float proj
 	_direction = projectileDirection.normalized();
 	_position = projectilePosition;
 
-	_circleCollider.radius = collisionRadius;
+	_damageType = damageType;
+
+	_circleCollider.radius = 8.f;
 	_circleCollider.position = projectilePosition + _direction * _projectileSprite->h * 0.5f;
 }
 
@@ -36,6 +38,10 @@ void Projectile::Render() {
 
 const Circle Projectile::GetCollider() const {
 	return _circleCollider;
+}
+
+const DamageType Projectile::GetDamageType() const {
+	return _damageType;
 }
 
 Sprite* Projectile::GetSprite() {
