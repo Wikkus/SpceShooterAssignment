@@ -82,10 +82,22 @@
     <ClCompile Include="src\projectileManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\lesserEnemy.cpp">
+    <ClCompile Include="src\enemyFighter.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\enemyManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemyBase.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\timerManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemyWizard.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -432,10 +444,22 @@
     <ClInclude Include="src\projectileManager.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\lesserEnemy.h">
+    <ClInclude Include="src\enemyFighter.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\enemyManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enemyBase.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\timerManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\timer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enemyWizard.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

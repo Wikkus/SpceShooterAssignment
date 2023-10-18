@@ -23,7 +23,7 @@ Vector2<float> GetMousePosition() {
 }
 
 Vector2<float> OrientationAsVector(float orientation) {
-	return  Vector2(-sinf(orientation), cosf(orientation)).normalized();
+	return  Vector2<float>(-sinf(orientation), cosf(orientation)).normalized();
 }
 
 float VectorAsOrientation(Vector2<float> direction) {
