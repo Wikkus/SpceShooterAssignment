@@ -70,12 +70,12 @@ void PlayerCharacter::ExecuteDeath() {
 	_currentHealth = _maxHealth;
 	_healthTextSprite->ChangeText(std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
 
-	enemyManager->RemoveAllEnemies();
+	enemyManager->DeactivateAllEnemies();
 	projectileManager->RemoveAllProjectiles();
 }
 
-void PlayerCharacter::FireProjectile() {
-	projectileManager->CreateProjectile(new Projectile("res/sprites/FireBall.png", DamageType::DamageEnemy, _orientation, _attackDamage, _direction, _position));
+void PlayerCharacter::FireProjectile() {	
+	projectileManager->SpawnProjectile(DamageType::DamageEnemy, _orientation, _direction, _position);
 }
 
 void PlayerCharacter::UpdateInput() {

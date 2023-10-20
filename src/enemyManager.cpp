@@ -3,68 +3,70 @@
 #include "enemyBase.h"
 #include "enemyFighter.h"
 #include "enemyWizard.h"
+#include "gameEngine.h"
 
-EnemyManager::EnemyManager() {}
-
-EnemyManager::~EnemyManager() {
-	for (unsigned int i = 0; i < _allEnemies.size(); i++) {
-		RemoveEnemy(i);;
-	}
+EnemyManager::EnemyManager() {
+	_activeEnemies.reserve(10000);
 }
 
+EnemyManager::~EnemyManager() {}
+
 void EnemyManager::Init() {
-	for (unsigned int i = 0; i < _allEnemies.size(); i++) {
-		_allEnemies[i]->Init();
+	for (unsigned i = 0; i < 5000; i++) {
+		_inactiveEnemies.emplace_back(new EnemyFighter());
+		_inactiveEnemies.back()->Init();
+		_inactiveEnemies.emplace_back(new EnemyWizard());
+		_inactiveEnemies.back()->Init();
 	}
 }
 
 void EnemyManager::Update() {
-	for (unsigned int i = 0; i < _allEnemies.size(); i++) {
-		_allEnemies[i]->Update();
+	for (unsigned i = 0; i < _activeEnemies.size(); i++) {
+		_activeEnemies[i]->Update();
 	}
 }
 
 void EnemyManager::Render() {
-	for (unsigned int i = 0; i < _allEnemies.size(); i++) {
-		_allEnemies[i]->Render();
+	for (unsigned i = 0; i < _activeEnemies.size(); i++) {
+		_activeEnemies[i]->Render();
 	}
 }
 
-void EnemyManager::CreateEnemy(EnemyType enemyType, Vector2<float> position) {
-	switch (enemyType) {
-	case EnemyType::EnemyFighter:
-		_allEnemies.emplace_back(new EnemyFighter("res/sprites/CoralineDadFighter.png", 30, position));
-		break;
-
-	case EnemyType::EnemyWizard:
-		_allEnemies.emplace_back(new EnemyWizard("res/sprites/CoralineDadWizard.png", 20, position));
-		break;
-	default:
-		break;
-	}
-	_allEnemies.back()->Init();
+std::vector<EnemyBase*> EnemyManager::GetActiveEnemies() {
+	return _activeEnemies;
 }
 
-void EnemyManager::RemoveAllEnemies() {
-	while (_allEnemies.size() > 0) {
-		RemoveEnemy(_allEnemies.size() - 1);
+void EnemyManager::CreateEnemy(EnemyType enemyType, float orientation,
+	Vector2<float> direction, Vector2<float> position) {
+	if (_inactiveEnemies.empty()) {
+		_activeEnemies.emplace_back(new EnemyFighter());
+		_activeEnemies.back()->Init();
+		_activeEnemies.emplace_back(new EnemyWizard());
+		_activeEnemies.back()->Init();
+	} else {
+		_activeEnemies.emplace_back(_inactiveEnemies.back());
+		_activeEnemies.back()->ActivateEnemy(orientation, direction, position);
+		_inactiveEnemies.pop_back();
+	}
+
+}
+
+void EnemyManager::DeactivateAllEnemies() {
+	while (_activeEnemies.size() > 0) {
+		DeactivateEnemy(_activeEnemies.size() - 1);
 	}
 }
 
-void EnemyManager::RemoveEnemy(unsigned int enemyIndex) {
-	_allEnemies[enemyIndex] = nullptr;
-	delete _allEnemies[enemyIndex];
-	std::swap(_allEnemies[enemyIndex], _allEnemies.back());
-	_allEnemies.pop_back();
+void EnemyManager::DeactivateEnemy(unsigned int enemyIndex) {
+	_inactiveEnemies.emplace_back(_activeEnemies[enemyIndex]);
+	_inactiveEnemies.back()->DeactivateEnemy();
+	std::swap(_activeEnemies[enemyIndex], _activeEnemies.back());
+	_activeEnemies.pop_back();
 }
 
 void EnemyManager::TakeDamage(unsigned int enemyIndex, unsigned int damageAmount) {
 	//TakeDamage returns true if the enemy dies
-	if(_allEnemies[enemyIndex]->TakeDamage(damageAmount)) {
-		RemoveEnemy(enemyIndex);
+	if(_inactiveEnemies[enemyIndex]->TakeDamage(damageAmount)) {
+		DeactivateEnemy(enemyIndex);
 	}
-}
-
-std::vector<EnemyBase*> EnemyManager::GetAllEnemies() {
-	return _allEnemies;
 }

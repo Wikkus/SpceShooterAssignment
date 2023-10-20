@@ -21,16 +21,19 @@ public:
 	void Update();
 	void Render();
 
-	void CreateEnemy(EnemyType enemyType, Vector2<float> position);
+	std::vector<EnemyBase*> GetActiveEnemies();
 
-	void RemoveAllEnemies();
-	void RemoveEnemy(unsigned int enemyIndex);
+	void CreateEnemy(EnemyType enemyType, float orientation,
+		Vector2<float> direction, Vector2<float> position);
+
+	void DeactivateAllEnemies();
+	void DeactivateEnemy(unsigned int enemyIndex);
 
 	void TakeDamage(unsigned int enemyIndex, unsigned int damageAmount);
 
-	std::vector<EnemyBase*> GetAllEnemies();
-
 private:
-	std::vector<EnemyBase*> _allEnemies;
+	std::vector<EnemyBase*> _activeEnemies;
+	std::vector<EnemyBase*> _inactiveEnemies;
+
 };
 

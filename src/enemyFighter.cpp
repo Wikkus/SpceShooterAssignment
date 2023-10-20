@@ -5,17 +5,19 @@
 #include "playerCharacter.h"
 #include "timerManager.h"
 
-EnemyFighter::EnemyFighter(const char* spritePath, int maxHealth, Vector2<float> position) : 
-	EnemyBase(spritePath, maxHealth, position) {
+EnemyFighter::EnemyFighter() {
 	_sprite = new Sprite();
-	_sprite->Load(spritePath);
+	_sprite->Load("res/sprites/CoralineDadFighter.png");
 
-	_position = position;
+	_position = Vector2<float>(-10000.f, -10000.f);
 
-	_circleCollider.position = position;
+	_circleCollider.position = _position;
 	_circleCollider.radius = 16.f;
 
+	_maxHealth = 30;
 	_currentHealth = _maxHealth;
+
+	_enemyType = EnemyType::EnemyFighter;
 }
 
 EnemyFighter::~EnemyFighter() {}
@@ -43,6 +45,10 @@ const Circle EnemyFighter::GetCollider() const {
 	return _circleCollider;
 }
 
+const EnemyType EnemyFighter::GetEnemyType() const {
+	return _enemyType;
+}
+
 const float EnemyFighter::GetOrientation() const {
 	return _orientation;
 }
@@ -59,6 +65,19 @@ const Vector2<float> EnemyFighter::GetPosition() const {
 	return _position;
 }
 
+void EnemyFighter::ActivateEnemy(float orienation, Vector2<float> direction, Vector2<float> position) {
+	_orientation = orienation;
+	_direction = direction;
+	_position = position;
+	_circleCollider.position = _position;
+}
+
+void EnemyFighter::DeactivateEnemy() {
+	_orientation = 0.f;
+	_direction = Vector2<float>(0.f, 0.f);
+	_position = Vector2<float>(-10000.f, -10000.f);
+	_circleCollider.position = _position;
+}
 
 bool EnemyFighter::TakeDamage(unsigned int damageAmount) {
 	_currentHealth -= damageAmount;

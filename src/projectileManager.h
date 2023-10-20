@@ -13,17 +13,23 @@ public:
 	void Update();
 	void Render();
 
-	void CreateProjectile(Projectile* projectile);
+	bool CheckCollision(DamageType damageType, unsigned int projectileIndex);
 
-	bool CheckCollision(unsigned int projectileIndex);
-
+	void AddNewProjectile(DamageType damageType, float orientation,
+		Vector2<float> direction, Vector2<float> position);
+	void SpawnProjectile(DamageType damageType, float orientation,
+		Vector2<float> direction, Vector2<float> position);
 	void RemoveAllProjectiles();
-
-	void RemoveProjectile(unsigned int projectileIndex);
+	void RemoveProjectile(DamageType damageType, unsigned int projectileIndex);
 
 
 private:
-	std::vector<Projectile*> _activeProjectiles;
+	std::vector<Projectile*> _activeEnemyProjectiles;
+	std::vector<Projectile*> _inactiveEnemyProjectiles;
+
+	std::vector<Projectile*> _activePlayerProjectiles;
+	std::vector<Projectile*> _inactivePlayerProjectiles;
+
 	Circle _intersectedCollider;
 	Circle _currentCollider;
 

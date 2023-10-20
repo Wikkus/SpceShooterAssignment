@@ -11,8 +11,7 @@ enum class DamageType {
 
 class Projectile {
 public:
-	Projectile(const char* spritePath, DamageType damageType, float projectileOrientation, 
-		unsigned int projectileDamage, Vector2<float> projectileDirection, Vector2<float> projectilePosition);
+	Projectile(DamageType damageType);
 	~Projectile();
 
 	void Init();
@@ -20,16 +19,19 @@ public:
 	void Render();
 
 	const Circle GetCollider() const;
-
 	const DamageType GetDamageType() const;
-
-	float GetOrientation(); 
-
 	const unsigned int GetProjectileDamage() const;
-
+	
+	float GetOrientation(); 
 	Sprite* GetSprite();
-
 	Vector2<float> GetPosition();
+	
+	void SetDirection(Vector2<float> direction);
+	void SetOrientation(float orientation);
+	void SetPosition(Vector2<float> position);
+
+	void ActivateProjectile(float orientation, Vector2<float> direction, Vector2<float> position);
+	void DeactivateProjectile();
 
 private:
 	Circle _circleCollider;
@@ -41,11 +43,11 @@ private:
 		
 	float _orientation = 0.f;
 
-	unsigned int _projectileDamage;
+	unsigned int _projectileDamage = 0;
 
 	Sprite* _projectileSprite = nullptr;
 	
 	Vector2<float> _direction = Vector2<float>(0.f, 0.f);
-	Vector2<float> _position = Vector2<float>(0.f, 0.f);
+	Vector2<float> _position = Vector2<float>(-10000.f, 10000.f);
 };
 

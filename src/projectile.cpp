@@ -5,22 +5,19 @@
 #include "enemyManager.h"
 #include "gameEngine.h"
 
-Projectile::Projectile(const char* spritePath, DamageType damageType, float projectileOrientation,
-	unsigned int projectileDamage, Vector2<float> projectileDirection, Vector2<float> projectilePosition) {
+Projectile::Projectile(DamageType damageType) {
 	_projectileSprite = new Sprite();
-	_projectileSprite->Load(spritePath);
+	if (damageType == DamageType::DamageEnemy) {
+		_projectileSprite->Load("res/sprites/Fireball.png");
 
-	_orientation = projectileOrientation;
+	} else if (damageType == DamageType::DamagePlayer) {
+		_projectileSprite->Load("res/sprites/Arcaneball.png");
 
-	_projectileDamage = projectileDamage;
-
-	_direction = projectileDirection.normalized();
-	_position = projectilePosition;
-
+	}
 	_damageType = damageType;
 
 	_circleCollider.radius = 8.f;
-	_circleCollider.position = projectilePosition + _direction * _projectileSprite->h * 0.5f;
+	_circleCollider.position = _position;
 }
 
 Projectile::~Projectile() {}
@@ -58,4 +55,31 @@ const unsigned int Projectile::GetProjectileDamage() const {
 
 Vector2<float> Projectile::GetPosition() {
 	return _position;
+}
+
+void Projectile::SetDirection(Vector2<float> direction) {
+	_direction = direction;
+}
+
+void Projectile::SetOrientation(float orientation) {
+	_orientation = orientation;
+}
+
+void Projectile::SetPosition(Vector2<float> position) {
+	_position = position;
+	_circleCollider.position = _position + _direction * (_projectileSprite->h * 0.25f);
+}
+
+void Projectile::ActivateProjectile(float orientation, Vector2<float> direction, Vector2<float> position) {
+	_orientation = orientation;
+	_direction = direction.normalized();
+	_position = position;
+	_circleCollider.position = _position + _direction * (_projectileSprite->h * 0.25f);
+}
+
+void Projectile::DeactivateProjectile() {
+	_orientation = 0.f;
+	_direction = Vector2<float>(0.f, 0.f);
+	_position = Vector2<float>(-10000.f, 10000.f);
+	_circleCollider.position = _position;
 }

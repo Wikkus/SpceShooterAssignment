@@ -6,17 +6,18 @@
 #include "projectileManager.h"
 #include "timerManager.h"
 
-EnemyWizard::EnemyWizard(const char* spritePath, int maxHealth, Vector2<float> position) :
-	EnemyBase(spritePath, maxHealth, position) {
+EnemyWizard::EnemyWizard() {
 	_sprite = new Sprite();
-	_sprite->Load(spritePath);
+	_sprite->Load("res/sprites/CoralineDadWizard.png");
 
-	_position = position;
+	_position = Vector2<float>(-10000.f, -10000.f);
 
-	_circleCollider.position = position;
+	_circleCollider.position = _position;
 	_circleCollider.radius = 16.f;
-
+	
+	_maxHealth = 20;
 	_currentHealth = _maxHealth;
+	_enemyType = EnemyType::EnemyWizard;
 }
 
 EnemyWizard::~EnemyWizard() {}
@@ -47,6 +48,10 @@ const Circle EnemyWizard::GetCollider() const {
 	return _circleCollider;
 }
 
+const EnemyType EnemyWizard::GetEnemyType() const {
+	return _enemyType;
+}
+
 const float EnemyWizard::GetOrientation() const {
 	return _orientation;
 }
@@ -63,6 +68,19 @@ const Vector2<float> EnemyWizard::GetPosition() const {
 	return _position;
 }
 
+void EnemyWizard::ActivateEnemy(float orienation, Vector2<float> direction, Vector2<float> position) {
+	_orientation = orienation;
+	_direction = direction;
+	_position = position;
+	_circleCollider.position = position;
+}
+
+void EnemyWizard::DeactivateEnemy() {
+	_orientation = 0.f;
+	_direction = Vector2<float>(0.f, 0.f);
+	_position = Vector2<float>(-10000.f, -10000.f);
+	_circleCollider.position = _position;
+}
 
 bool EnemyWizard::TakeDamage(unsigned int damageAmount) {
 	_currentHealth -= damageAmount;
@@ -74,7 +92,7 @@ bool EnemyWizard::TakeDamage(unsigned int damageAmount) {
 
 void EnemyWizard::UpdateAttack() {
 	if (IsInDistance(_position, playerCharacter->GetPosition(), _attackRange)) {
-		projectileManager->CreateProjectile(new Projectile("res/sprites/Arcaneball.png", DamageType::DamagePlayer, _orientation, _attackDamage, _direction, _position));
+		projectileManager->SpawnProjectile(DamageType::DamagePlayer, _orientation, _direction, _position);
 		_attackTimer->ResetTimer();
 	}
 }

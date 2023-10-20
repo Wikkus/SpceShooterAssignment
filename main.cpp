@@ -43,13 +43,16 @@ int main(int argc, char* argv[]) {
 		0.f, Vector2<float>(windowWidth * 0.5f, windowHeight * 0.5f));
 	timerManager = new TimerManager();
 
-
+	//Init here
 	enemyManager->Init();
 	imGuiHandler->Init();
 	playerCharacter->Init();
 	projectileManager->Init();
 
-	Timer* spawnTimer = timerManager->CreateTimer(2.f);
+	Timer* spawnTimer = timerManager->CreateTimer(0.f);
+
+	TextSprite* fpsText = new TextSprite();
+	fpsText->Init("res/roboto.ttf", 24, std::to_string(0).c_str(), { 255, 255, 255,255});
 
 	Uint64 previous_ticks = SDL_GetPerformanceCounter();
 	bool running = true;
@@ -62,6 +65,7 @@ int main(int argc, char* argv[]) {
 		const Uint64 delta_ticks = ticks - previous_ticks;
 		previous_ticks = ticks;
 		deltaTime = (float)delta_ticks / (float)SDL_GetPerformanceFrequency();
+
 
 		SDL_Event eventType;
 		while (SDL_PollEvent(&eventType)) {
@@ -104,28 +108,38 @@ int main(int argc, char* argv[]) {
 				}
 			}
 		}
+
+		//Update here
 		enemyManager->Update();
 		playerCharacter->Update();
 		projectileManager->Update();
 		timerManager->Update();
 
 		if (spawnTimer->GetTimerFinished()) {
-			std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
-			std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
-
-			enemyManager->CreateEnemy(EnemyType::EnemyFighter, Vector2<float>(distX(randomEngine), distY(randomEngine)));
-			enemyManager->CreateEnemy(EnemyType::EnemyWizard, Vector2<float>(distX(randomEngine), distY(randomEngine)));
-			spawnTimer->ResetTimer();
+			for (unsigned int i = 0; i < 10000; i++) {
+				std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
+				std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
+				//enemyManager->CreateEnemy(EnemyType::EnemyFighter, 0.f, 
+				//	Vector2<float>(0.f, 0.f), Vector2<float>(distX(randomEngine), distY(randomEngine)));
+				enemyManager->CreateEnemy(EnemyType::EnemyWizard, 0.f, 
+					Vector2<float>(0.f, 0.f), Vector2<float>(distX(randomEngine), distY(randomEngine)));
+				spawnTimer->ResetTimer();
+				spawnTimer->DeactivateTimer();
+			}
 		}
 
 		SDL_SetRenderDrawColor(renderer, 0, 125, 0, 255);
 		SDL_RenderClear(renderer);
 
-		//Render here
+		//Render images here
 		enemyManager->Render();
 		playerCharacter->Render();
 		projectileManager->Render();
 		
+
+		//Render text here
+		fpsText->ChangeText(std::to_string(1 / deltaTime).c_str(), { 255, 255, 255, 255 });
+		fpsText->Render();
 		playerCharacter->RenderText();
 
 		debugDrawer->DrawBoxes();

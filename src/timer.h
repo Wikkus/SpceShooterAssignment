@@ -7,10 +7,13 @@ public:
 
 	const bool GetTimerFinished() const;
 
+	void ActivateTimer();
+	void DeactivateTimer();
 	void ResetTimer();
 	void Update();
 
 private:
+	bool _timerActive = true;
 	bool _timerFinished = false;
 
 	const float _timeInSeconds;	
