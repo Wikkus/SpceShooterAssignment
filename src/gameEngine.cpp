@@ -1,9 +1,11 @@
 #include "gameEngine.h"
 
 #include "debugDrawer.h"
+#include "enemyBase.h"
 #include "enemyManager.h"
 #include "imGuiManager.h"
 #include "playerCharacter.h"
+#include "quadTree.h"
 #include "timerManager.h"
 
 #include <vector>
@@ -16,6 +18,9 @@ std::shared_ptr<DebugDrawer> debugDrawer;
 std::shared_ptr<ImGuiHandler> imGuiHandler;
 PlayerCharacter* playerCharacter;
 ProjectileManager* projectileManager;
+
+QuadTreeTemp<EnemyBase*>* enemyQuadTree;
+QuadTreeTemp<Projectile*>* projectileQuadTree;
 TimerManager* timerManager;
 
 float windowHeight = 600.f;

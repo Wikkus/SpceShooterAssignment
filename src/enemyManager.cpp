@@ -4,6 +4,7 @@
 #include "enemyFighter.h"
 #include "enemyWizard.h"
 #include "gameEngine.h"
+#include "quadTree.h"
 
 EnemyManager::EnemyManager() {
 	_activeEnemies.reserve(10000);
@@ -12,7 +13,7 @@ EnemyManager::EnemyManager() {
 EnemyManager::~EnemyManager() {}
 
 void EnemyManager::Init() {
-	for (unsigned i = 0; i < 5000; i++) {
+	for (unsigned i = 0; i < 1000; i++) {
 		_inactiveEnemies.emplace_back(new EnemyFighter());
 		_inactiveEnemies.back()->Init();
 		_inactiveEnemies.emplace_back(new EnemyWizard());
@@ -23,6 +24,7 @@ void EnemyManager::Init() {
 void EnemyManager::Update() {
 	for (unsigned i = 0; i < _activeEnemies.size(); i++) {
 		_activeEnemies[i]->Update();
+		enemyQuadTree->InsertTemp(_activeEnemies[i], _activeEnemies[i]->GetCollider());
 	}
 }
 
@@ -45,28 +47,32 @@ void EnemyManager::CreateEnemy(EnemyType enemyType, float orientation,
 		_activeEnemies.back()->Init();
 	} else {
 		_activeEnemies.emplace_back(_inactiveEnemies.back());
-		_activeEnemies.back()->ActivateEnemy(orientation, direction, position);
 		_inactiveEnemies.pop_back();
 	}
-
+	_activeEnemies.back()->ActivateEnemy(orientation, _activeEnemies.size() - 1, direction, position);
 }
 
 void EnemyManager::DeactivateAllEnemies() {
 	while (_activeEnemies.size() > 0) {
-		DeactivateEnemy(_activeEnemies.size() - 1);
+		DeactivateEnemy(_activeEnemies.front()->GetID());
 	}
 }
 
-void EnemyManager::DeactivateEnemy(unsigned int enemyIndex) {
-	_inactiveEnemies.emplace_back(_activeEnemies[enemyIndex]);
-	_inactiveEnemies.back()->DeactivateEnemy();
-	std::swap(_activeEnemies[enemyIndex], _activeEnemies.back());
-	_activeEnemies.pop_back();
+void EnemyManager::DeactivateEnemy(unsigned int enemyID) {
+	for (unsigned int i = 0; i < _activeEnemies.size(); i++) {
+		if (_activeEnemies[i]->GetID() == enemyID) {
+			_inactiveEnemies.emplace_back(_activeEnemies[i]);
+			_inactiveEnemies.back()->DeactivateEnemy();
+			std::swap(_activeEnemies[i], _activeEnemies.back());
+			_activeEnemies.pop_back();
+			break;
+		}
+	}
 }
 
 void EnemyManager::TakeDamage(unsigned int enemyIndex, unsigned int damageAmount) {
 	//TakeDamage returns true if the enemy dies
-	if(_inactiveEnemies[enemyIndex]->TakeDamage(damageAmount)) {
+	if(_activeEnemies[enemyIndex]->TakeDamage(damageAmount)) {
 		DeactivateEnemy(enemyIndex);
 	}
 }

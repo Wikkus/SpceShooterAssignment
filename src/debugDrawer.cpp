@@ -7,6 +7,7 @@ void DebugDrawer::AddDebugBox(Vector2<float> position, Vector2<float> min, Vecto
 	DebugBox debugBox;
 	debugBox.min = min;
 	debugBox.max = max;
+	debugBox.position = position;
 	_debugBox.emplace_back(debugBox);
 }
 
@@ -43,10 +44,10 @@ void DebugDrawer::DrawBoxes() {
 	SDL_SetRenderDrawColor(renderer, 125, 0, 125, 255);
 	for (int i = 0; i < _debugBox.size(); i++) {
 		SDL_Rect rect = {
-			_debugBox[i].min.x,
-			_debugBox[i].min.y,
+			_debugBox[i].position.x - ((_debugBox[i].max.x - _debugBox[i].min.x) * 0.5f),
+			_debugBox[i].position.y - ((_debugBox[i].max.y - _debugBox[i].min.y) * 0.5f),
 			_debugBox[i].max.x - _debugBox[i].min.x,
-			_debugBox[i].max.y - _debugBox[i].min.y
+			_debugBox[i].max.y - _debugBox[i].min.y			
 		};
 		SDL_RenderDrawRect(renderer, &rect);
 	}

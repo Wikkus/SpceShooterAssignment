@@ -5,7 +5,7 @@
 #include "enemyManager.h"
 #include "gameEngine.h"
 
-Projectile::Projectile(DamageType damageType) {
+Projectile::Projectile(DamageType damageType, unsigned int projectileID) {
 	_projectileSprite = new Sprite();
 	if (damageType == DamageType::DamageEnemy) {
 		_projectileSprite->Load("res/sprites/Fireball.png");
@@ -15,6 +15,9 @@ Projectile::Projectile(DamageType damageType) {
 
 	}
 	_damageType = damageType;
+	_projectileID = projectileID;
+
+	_projectileDamage = 0;	
 
 	_circleCollider.radius = 8.f;
 	_circleCollider.position = _position;
@@ -39,6 +42,10 @@ const Circle Projectile::GetCollider() const {
 
 const DamageType Projectile::GetDamageType() const {
 	return _damageType;
+}
+
+const unsigned int Projectile::GetProjectileID() const {
+	return _projectileID;
 }
 
 Sprite* Projectile::GetSprite() {

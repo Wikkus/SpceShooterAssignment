@@ -18,6 +18,7 @@ void Timer::ActivateTimer() {
 
 void Timer::DeactivateTimer() {
 	_timerActive = false;
+	_timerFinished = false;
 }
 
 void Timer::ResetTimer() {

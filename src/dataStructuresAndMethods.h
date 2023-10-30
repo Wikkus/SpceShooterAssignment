@@ -5,7 +5,7 @@ bool IsInDistance(Vector2<float> positionA, Vector2<float> positionB, float dist
 bool OutOfBorderX(float positionX);
 bool OutOfBorderY(float positionY);
 
-Vector2<float> GetMousePosition();
+Vector2<float> GetCursorPosition();
 
 Vector2<float>  OrientationAsVector(float orientation);
 

@@ -10,6 +10,7 @@
 #include "ImGui/imgui_sdl.h"
 #include "ImGui/imgui_impl_sdl.h"
 
+#include "src/dataStructuresAndMethods.h"
 #include "src/debugDrawer.h"
 #include "src/enemyBase.h"
 #include "src/enemyFighter.h"
@@ -18,6 +19,7 @@
 #include "src/ImGuiManager.h"
 #include "src/playerCharacter.h"
 #include "src/projectileManager.h"
+#include "src/quadTree.h"
 #include "src/sprite.h"
 #include "src/spriteSheet.h"
 #include "src/timerManager.h"
@@ -43,13 +45,19 @@ int main(int argc, char* argv[]) {
 		0.f, Vector2<float>(windowWidth * 0.5f, windowHeight * 0.5f));
 	timerManager = new TimerManager();
 
+	QuadTreeNode quadTreeNode;
+	quadTreeNode.rectangle = AABB::makeFromPositionSize(
+		Vector2(windowWidth * 0.5f, windowHeight * 0.5f), windowHeight, windowWidth);
+	enemyQuadTree = new QuadTreeTemp<EnemyBase*>(quadTreeNode, 200);
+	projectileQuadTree = new QuadTreeTemp<Projectile*>(quadTreeNode, 200);
+
 	//Init here
 	enemyManager->Init();
 	imGuiHandler->Init();
 	playerCharacter->Init();
 	projectileManager->Init();
 
-	Timer* spawnTimer = timerManager->CreateTimer(0.f);
+	Timer* spawnTimer = timerManager->CreateTimer(0.25f);
 
 	TextSprite* fpsText = new TextSprite();
 	fpsText->Init("res/roboto.ttf", 24, std::to_string(0).c_str(), { 255, 255, 255,255});
@@ -111,21 +119,36 @@ int main(int argc, char* argv[]) {
 
 		//Update here
 		enemyManager->Update();
-		playerCharacter->Update();
 		projectileManager->Update();
+		
+		playerCharacter->Update();
+
 		timerManager->Update();
 
 		if (spawnTimer->GetTimerFinished()) {
-			for (unsigned int i = 0; i < 10000; i++) {
-				std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
-				std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
-				//enemyManager->CreateEnemy(EnemyType::EnemyFighter, 0.f, 
-				//	Vector2<float>(0.f, 0.f), Vector2<float>(distX(randomEngine), distY(randomEngine)));
-				enemyManager->CreateEnemy(EnemyType::EnemyWizard, 0.f, 
-					Vector2<float>(0.f, 0.f), Vector2<float>(distX(randomEngine), distY(randomEngine)));
-				spawnTimer->ResetTimer();
-				spawnTimer->DeactivateTimer();
-			}
+			////Spawn quadtree points test
+			//std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
+			//std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
+			//for (unsigned int i = 0; i < 5; i++) {
+			//	Circle circle;
+			//	circle.position = Vector2<float>(distX(randomEngine), distY(randomEngine));
+			//	//circle.position = Vector2<float>(windowWidth * 0.20f, windowHeight * 0.30f);
+			//	circle.radius = 10.f;
+			//	circleColliders.emplace_back(circle);
+			//	//points.emplace_back(Vector2<float>(windowWidth * 0.20f, windowHeight * 0.30f));
+			//	quadTree->Insert(circleColliders.back());
+			//}
+
+			////Spawn enemies test
+				for (unsigned int i = 0; i < 500; i++) {
+					std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
+					std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
+					enemyManager->CreateEnemy(EnemyType::EnemyFighter, 0.f, 
+						Vector2<float>(0.f, 0.f), Vector2<float>(distX(randomEngine), distY(randomEngine)));
+					
+				}
+			//spawnTimer->ResetTimer();
+			spawnTimer->DeactivateTimer();
 		}
 
 		SDL_SetRenderDrawColor(renderer, 0, 125, 0, 255);
@@ -134,8 +157,13 @@ int main(int argc, char* argv[]) {
 		//Render images here
 		enemyManager->Render();
 		playerCharacter->Render();
-		projectileManager->Render();
-		
+		projectileManager->Render();	
+
+		enemyQuadTree->RenderTemp();
+		//projectileQuadTree->RenderTemp();
+
+		enemyQuadTree->ClearTemp();
+		projectileQuadTree->ClearTemp();
 
 		//Render text here
 		fpsText->ChangeText(std::to_string(1 / deltaTime).c_str(), { 255, 255, 255, 255 });

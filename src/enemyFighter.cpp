@@ -1,6 +1,7 @@
 #include "enemyFighter.h"
 
 #include "dataStructuresAndMethods.h"
+#include "debugDrawer.h"
 #include "gameEngine.h"
 #include "playerCharacter.h"
 #include "timerManager.h"
@@ -11,8 +12,8 @@ EnemyFighter::EnemyFighter() {
 
 	_position = Vector2<float>(-10000.f, -10000.f);
 
-	_circleCollider.position = _position;
 	_circleCollider.radius = 16.f;
+	_circleCollider.position = _position;
 
 	_maxHealth = 30;
 	_currentHealth = _maxHealth;
@@ -34,7 +35,6 @@ void EnemyFighter::Update() {
 	if (!IsInDistance(_position, playerCharacter->GetPosition(), _attackRange * 0.5f)) {
 		UpdateMovement();
 	}
-	UpdateAttack();
 }
 
 void EnemyFighter::Render() {
@@ -49,12 +49,27 @@ const EnemyType EnemyFighter::GetEnemyType() const {
 	return _enemyType;
 }
 
+const Timer* EnemyFighter::GetAttackTimer() const {	return _attackTimer;
+}
+
+const float EnemyFighter::GetAttackDamage() const {
+	return _attackDamage;
+}
+
+const float EnemyFighter::GetAttackRange() const {
+	return _attackRange;
+}
+
 const float EnemyFighter::GetOrientation() const {
 	return _orientation;
 }
 
 const int EnemyFighter::GetCurrentHealth() const {
 	return _currentHealth;
+}
+
+const unsigned int EnemyFighter::GetID() const {
+	return _id;
 }
 
 const Sprite* EnemyFighter::GetSprite() const {
@@ -65,8 +80,9 @@ const Vector2<float> EnemyFighter::GetPosition() const {
 	return _position;
 }
 
-void EnemyFighter::ActivateEnemy(float orienation, Vector2<float> direction, Vector2<float> position) {
+void EnemyFighter::ActivateEnemy(float orienation, unsigned int id, Vector2<float> direction, Vector2<float> position) {
 	_orientation = orienation;
+	_id = id;
 	_direction = direction;
 	_position = position;
 	_circleCollider.position = _position;
@@ -74,6 +90,7 @@ void EnemyFighter::ActivateEnemy(float orienation, Vector2<float> direction, Vec
 
 void EnemyFighter::DeactivateEnemy() {
 	_orientation = 0.f;
+	_id = -1;
 	_direction = Vector2<float>(0.f, 0.f);
 	_position = Vector2<float>(-10000.f, -10000.f);
 	_circleCollider.position = _position;
@@ -87,13 +104,9 @@ bool EnemyFighter::TakeDamage(unsigned int damageAmount) {
 	return false;
 }
 
-void EnemyFighter::UpdateAttack() {
-	if (_attackTimer->GetTimerFinished()) {
-		if (IsInDistance(_position, playerCharacter->GetPosition(), _attackRange)) {
-			playerCharacter->TakeDamage(_attackDamage);
-			_attackTimer->ResetTimer();
-		}
-	}
+void EnemyFighter::ExecuteAttack() {
+	playerCharacter->TakeDamage(_attackDamage);
+	_attackTimer->ResetTimer();
 }
 
 void EnemyFighter::UpdateMovement() {
@@ -107,4 +120,8 @@ void EnemyFighter::UpdateMovement() {
 
 void EnemyFighter::UpdateTarget() {
 	_targetPosition = playerCharacter->GetPosition();
+}
+
+void EnemyFighter::Separation() {
+	
 }

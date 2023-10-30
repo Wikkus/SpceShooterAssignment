@@ -13,7 +13,7 @@ bool OutOfBorderY(float positionY) {
 	return positionY < 0.f || positionY > windowHeight;
 }
 
-Vector2<float> GetMousePosition() {
+Vector2<float> GetCursorPosition() {
 	int mousePositionX;
 	int mousePositionY;
 	SDL_GetMouseState(&mousePositionX, &mousePositionY);

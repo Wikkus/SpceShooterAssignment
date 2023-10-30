@@ -7,6 +7,7 @@
 #include "projectile.h"
 #include "projectileManager.h"
 #include "timerManager.h"
+#include "quadTree.h"
 
 #include <string>
 
@@ -37,13 +38,16 @@ PlayerCharacter::~PlayerCharacter() {
 
 void PlayerCharacter::Init() {
 	_healthTextSprite->Init("res/roboto.ttf", 24, std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
-	_attackTimer = timerManager->CreateTimer(0.5f);
+	_attackTimer = timerManager->CreateTimer(0.1f);
 }
 
 void PlayerCharacter::Update() {
+	UpdateCollision();
 	UpdateInput();
 	UpdateMovement();
 	UpdateTarget();
+
+
 }
 
 void PlayerCharacter::Render() {
@@ -55,7 +59,7 @@ void PlayerCharacter::RenderText() {
 }
 
 void PlayerCharacter::TakeDamage(unsigned int damageAmount) {
-	_currentHealth -= damageAmount;
+	//_currentHealth -= damageAmount;
 	
 	_healthTextSprite->ChangeText(std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
 	if (_currentHealth <= 0) {
@@ -76,6 +80,24 @@ void PlayerCharacter::ExecuteDeath() {
 
 void PlayerCharacter::FireProjectile() {	
 	projectileManager->SpawnProjectile(DamageType::DamageEnemy, _orientation, _direction, _position);
+}
+
+void PlayerCharacter::UpdateCollision() {
+	std::vector<EnemyBase*> enemies = enemyQuadTree->QueryTemp(playerCharacter->GetCircleCollider());
+	for (unsigned int i = 0; i < enemies.size(); i++) {
+		if (enemies[i]->GetEnemyType() != EnemyType::EnemyFighter) {
+			continue;
+		}
+		if (IsInDistance(enemies[i]->GetPosition(), _position, enemies[i]->GetAttackRange()) &&
+			enemies[i]->GetAttackTimer()->GetTimerFinished()) {
+			enemies[i]->ExecuteAttack();
+		}
+	}
+	std::vector<Projectile*> porjectilesHit = projectileQuadTree->QueryTemp(playerCharacter->GetCircleCollider());
+	for (unsigned int i = 0; i < porjectilesHit.size(); i++) {
+		playerCharacter->TakeDamage(porjectilesHit[i]->GetProjectileDamage());
+		projectileManager->RemoveProjectile(DamageType::DamagePlayer, porjectilesHit[i]->GetProjectileID());
+	}
 }
 
 void PlayerCharacter::UpdateInput() {
@@ -114,7 +136,7 @@ void PlayerCharacter::UpdateMovement() {
 }
 
 void PlayerCharacter::UpdateTarget() {
-	_direction = GetMousePosition() - _position;
+	_direction = GetCursorPosition() - _position;
 	_orientation = VectorAsOrientation(_direction);
 
 }

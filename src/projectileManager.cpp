@@ -6,37 +6,30 @@
 #include "gameEngine.h"
 #include "imGuiManager.h"
 #include "playerCharacter.h"
-
+#include "quadTree.h"
 ProjectileManager::ProjectileManager() {
 	_activeEnemyProjectiles.reserve(10000);
-	_activePlayerProjectiles.reserve(2000);
+	_activePlayerProjectiles.reserve(2500);
 }
 
 ProjectileManager::~ProjectileManager() {
 	RemoveAllProjectiles();
-	while (_inactiveEnemyProjectiles.size() > 0) {
-		_inactiveEnemyProjectiles.back() = nullptr;
-		delete _inactiveEnemyProjectiles.back();
-		_inactiveEnemyProjectiles.pop_back();
-	}
-	while (_inactivePlayerProjectiles.size() > 0) {
-		_inactivePlayerProjectiles.back() = nullptr;
-		delete _inactivePlayerProjectiles.back();
-		_inactivePlayerProjectiles.pop_back();
-	}
 }
 
 void ProjectileManager::Init() {
-	for (unsigned int i = 0; i < 20000; i++) {
-		_inactiveEnemyProjectiles.emplace_back(new Projectile(DamageType::DamagePlayer));
-		if (i <= 1000) {
-			_inactivePlayerProjectiles.emplace_back(new Projectile(DamageType::DamageEnemy));		
+	for (unsigned int i = 0; i < 10000; i++) {
+		_inactiveEnemyProjectiles.emplace_back(new Projectile(DamageType::DamagePlayer, _latestProjectileID));
+		_latestProjectileID += 4;
+		if (i <= 2500) {
+			_inactivePlayerProjectiles.emplace_back(new Projectile(DamageType::DamageEnemy, _latestProjectileID));
+			_latestProjectileID += 4;
 		}
 	}
 }
 
 void ProjectileManager::Update() {
 	for (unsigned int i = 0; i < _activeEnemyProjectiles.size(); i++) {
+		projectileQuadTree->InsertTemp(_activeEnemyProjectiles[i], _activeEnemyProjectiles[i]->GetCollider());
 		_activeEnemyProjectiles[i]->Update();
 		if (CheckCollision(DamageType::DamagePlayer, i)) {
 			continue;
@@ -69,13 +62,14 @@ void ProjectileManager::Render() {
 
 void ProjectileManager::AddNewProjectile(DamageType damageType, float orientation, Vector2<float> direction, Vector2<float> position) {
 	if (damageType == DamageType::DamageEnemy) {
-		_activePlayerProjectiles.emplace_back(new Projectile(DamageType::DamagePlayer));
+		_activePlayerProjectiles.emplace_back(new Projectile(DamageType::DamageEnemy, _latestProjectileID));
 		_activePlayerProjectiles.back()->ActivateProjectile(orientation, direction, position);
 	
 	} else if (damageType == DamageType::DamagePlayer) {
-		_activeEnemyProjectiles.emplace_back(new Projectile(DamageType::DamagePlayer));
+		_activeEnemyProjectiles.emplace_back(new Projectile(DamageType::DamagePlayer, _latestProjectileID));
 		_activeEnemyProjectiles.back()->ActivateProjectile(orientation, direction, position);
 	}
+	_latestProjectileID += 4;
 }
 
 void ProjectileManager::SpawnProjectile(DamageType damageType, float orientation,
@@ -102,50 +96,61 @@ void ProjectileManager::SpawnProjectile(DamageType damageType, float orientation
 
 bool ProjectileManager::CheckCollision(DamageType damageType, unsigned int projectileIndex) {
 	if (damageType == DamageType::DamageEnemy) {
-		_currentCollider = _activePlayerProjectiles[projectileIndex]->GetCollider();
-		for (unsigned int i = 0; i < enemyManager->GetActiveEnemies().size(); i++) {
-			_intersectedCollider = enemyManager->GetActiveEnemies()[i]->GetCollider();
-			if (CircleIntersect(_currentCollider, _intersectedCollider)) {
-				if (enemyManager->GetActiveEnemies()[i]->TakeDamage(_activePlayerProjectiles[projectileIndex]->GetProjectileDamage())) {
-					enemyManager->DeactivateEnemy(i);
-				}
-				RemoveProjectile(DamageType::DamageEnemy, projectileIndex);
-				return true;
+		std::vector<EnemyBase*> enemiesHit = enemyQuadTree->QueryTemp(_activePlayerProjectiles[projectileIndex]->GetCollider());
+		for (unsigned int i = 0; i < enemiesHit.size(); i++) {
+			if (enemiesHit[i]->TakeDamage(_activePlayerProjectiles[projectileIndex]->GetProjectileDamage())) {
+				enemyManager->DeactivateEnemy(enemiesHit[i]->GetID());
 			}
 		}
-	} else if (damageType == DamageType::DamagePlayer) {
-		_currentCollider = _activeEnemyProjectiles[projectileIndex]->GetCollider();
-		_intersectedCollider = playerCharacter->GetCircleCollider();
-		if (CircleIntersect(_currentCollider, _intersectedCollider)) {
-			playerCharacter->TakeDamage(_activeEnemyProjectiles[projectileIndex]->GetProjectileDamage());
-			RemoveProjectile(damageType, projectileIndex);
+		if (enemiesHit.size() > 0) {
+			RemoveProjectile(DamageType::DamageEnemy, _activePlayerProjectiles[projectileIndex]->GetProjectileID());
 			return true;
 		}
+	} else if (damageType == DamageType::DamagePlayer) {
+		//_currentCollider = _activeEnemyProjectiles[projectileIndex]->GetCollider();
+		//_intersectedCollider = playerCharacter->GetCircleCollider();
+		//if (CircleIntersect(_currentCollider, _intersectedCollider)) {
+		//	playerCharacter->TakeDamage(_activeEnemyProjectiles[projectileIndex]->GetProjectileDamage());
+		//	RemoveProjectile(damageType, _activeEnemyProjectiles[projectileIndex]->GetProjectileID());
+		//	return true;
+		//}
 	}
 	return false;
 }
 
 void ProjectileManager::RemoveAllProjectiles() {
 	while (_activeEnemyProjectiles.size() > 0) {
-		RemoveProjectile(DamageType::DamagePlayer, _activeEnemyProjectiles.size() - 1);
+		RemoveProjectile(DamageType::DamagePlayer, _activeEnemyProjectiles.front()->GetProjectileID());
 	}
 	while (_activePlayerProjectiles.size() > 0) {
-		RemoveProjectile(DamageType::DamageEnemy, _activePlayerProjectiles.size() - 1);
+		RemoveProjectile(DamageType::DamageEnemy, _activePlayerProjectiles.front()->GetProjectileID());
 	}
 }
 
-void ProjectileManager::RemoveProjectile(DamageType damageType, unsigned int projectileIndex) {
+void ProjectileManager::RemoveProjectile(DamageType damageType, unsigned int projectileID) {
 	if (damageType == DamageType::DamagePlayer) {
-		_activeEnemyProjectiles[projectileIndex]->DeactivateProjectile();
-		std::swap(_activeEnemyProjectiles[projectileIndex], _activeEnemyProjectiles.back());
-		_inactiveEnemyProjectiles.emplace_back(_activeEnemyProjectiles.back());
-		_activeEnemyProjectiles.pop_back();
-		
-
+		for (unsigned int i = 0; i < _activeEnemyProjectiles.size(); i++) {
+			if (_activeEnemyProjectiles[i]->GetProjectileID() == projectileID) {
+				std::swap(_activeEnemyProjectiles[i], _activeEnemyProjectiles.back());
+				_inactiveEnemyProjectiles.emplace_back(_activeEnemyProjectiles.back());
+				_inactiveEnemyProjectiles.back()->DeactivateProjectile();
+				_activeEnemyProjectiles.pop_back();
+				break;
+			}
+		}
 	} else if (damageType == DamageType::DamageEnemy) {
-		_activePlayerProjectiles[projectileIndex]->DeactivateProjectile();
-		std::swap(_activePlayerProjectiles[projectileIndex], _activePlayerProjectiles.back());
-		_inactivePlayerProjectiles.emplace_back(_activePlayerProjectiles.back());	
-		_activePlayerProjectiles.pop_back();	
+		for (unsigned int i = 0; i < _activePlayerProjectiles.size(); i++) {
+			if (_activePlayerProjectiles[i]->GetProjectileID() == projectileID) {
+				std::swap(_activePlayerProjectiles[i], _activePlayerProjectiles.back());
+				_inactivePlayerProjectiles.emplace_back(_activePlayerProjectiles.back());
+				_inactivePlayerProjectiles.back()->DeactivateProjectile();
+				_activePlayerProjectiles.pop_back();
+				break;
+			}
+		}
 	}
+}
+
+std::vector<Projectile*> ProjectileManager::GetActiveProjectiles() {
+	return _activePlayerProjectiles;
 }

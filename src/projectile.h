@@ -11,7 +11,7 @@ enum class DamageType {
 
 class Projectile {
 public:
-	Projectile(DamageType damageType);
+	Projectile(DamageType damageType, unsigned int projectileID);
 	~Projectile();
 
 	void Init();
@@ -20,6 +20,7 @@ public:
 
 	const Circle GetCollider() const;
 	const DamageType GetDamageType() const;
+	const unsigned int GetProjectileID() const;
 	const unsigned int GetProjectileDamage() const;
 	
 	float GetOrientation(); 
@@ -43,6 +44,7 @@ private:
 		
 	float _orientation = 0.f;
 
+	unsigned int _projectileID = -1;
 	unsigned int _projectileDamage = 0;
 
 	Sprite* _projectileSprite = nullptr;

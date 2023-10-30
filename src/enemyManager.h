@@ -27,7 +27,7 @@ public:
 		Vector2<float> direction, Vector2<float> position);
 
 	void DeactivateAllEnemies();
-	void DeactivateEnemy(unsigned int enemyIndex);
+	void DeactivateEnemy(unsigned int enemyID);
 
 	void TakeDamage(unsigned int enemyIndex, unsigned int damageAmount);
 

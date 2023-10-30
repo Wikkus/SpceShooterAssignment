@@ -17,27 +17,26 @@ public:
 
 	const Circle GetCollider() const override;
 	const EnemyType GetEnemyType() const override;
+	const float GetAttackDamage() const override;
+	const float GetAttackRange() const override;
 	const float GetOrientation() const override;
 	const int GetCurrentHealth() const override;
+	const unsigned int GetID() const override;
 	const Sprite* GetSprite() const override;
+	const Timer* GetAttackTimer() const override;
 	const Vector2<float> GetPosition() const override;
 
-	void ActivateEnemy(float orienation, Vector2<float> direction, Vector2<float> position);
+	void ActivateEnemy(float orienation, unsigned int id, Vector2<float> direction, Vector2<float> position) override;
 	void DeactivateEnemy() override;
+	void ExecuteAttack() override;
 
 private:
-	void UpdateAttack();
 	void UpdateMovement();
 	void UpdateTarget();
 
 	const float _attackRange = 200.f;
 	const float _movementSpeed = 50.f;
-	const unsigned int _attackDamage = 0;
-
-	Sprite* _sprite = nullptr;
-	Vector2<float> _position = Vector2<float>(-10000.f, -10000.f);
-	Vector2<float> _targetPosition = Vector2<float>(0.f, 0.f);
-	Vector2<float> _direction = Vector2<float>(0.f, 0.f);
+	const unsigned int _attackDamage = 10;
 
 
 };

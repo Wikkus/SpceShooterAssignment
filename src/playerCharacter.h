@@ -21,9 +21,6 @@ public:
 
 	void TakeDamage(unsigned int damageAmount);
 
-	void UpdateInput();
-	void UpdateMovement();
-	void UpdateTarget();
 
 	const Circle GetCircleCollider() const;
 
@@ -36,6 +33,10 @@ public:
 	const Vector2<float> GetPosition() const;
 
 private:
+	void UpdateCollision();
+	void UpdateInput();
+	void UpdateMovement();
+	void UpdateTarget();
 	Circle _circleCollider;
 
 	const float _attackDamage = 10;

@@ -22,6 +22,7 @@ public:
 	void RemoveAllProjectiles();
 	void RemoveProjectile(DamageType damageType, unsigned int projectileIndex);
 
+	std::vector<Projectile*> GetActiveProjectiles();
 
 private:
 	std::vector<Projectile*> _activeEnemyProjectiles;
@@ -32,6 +33,8 @@ private:
 
 	Circle _intersectedCollider;
 	Circle _currentCollider;
+
+	unsigned int _latestProjectileID = 0;
 
 };
 

@@ -5,15 +5,15 @@
 #include <minmax.h>
 #include <SDL2/SDL.h>
 
-#define PI 3.1415
-
-AABB AABB::makeFromPositionSize(float x, float y, float w, float h) {
+AABB AABB::makeFromPositionSize(Vector2<float> position, float h, float w) {
 	AABB boxCollider;
-	boxCollider.xMin = x - w / 2;
-	boxCollider.yMin = y - h / 2;
-	boxCollider.xMax = x + w / 2;
-	boxCollider.yMax = y + h / 2;
-	boxCollider.detectionOffset;
+	boxCollider.position = position;
+	boxCollider.min.x = position.x - (w * 0.5f);
+	boxCollider.min.y = position.y - (h * 0.5f);
+	boxCollider.max.x = position.x + (w * 0.5f);
+	boxCollider.max.y = position.y + (h * 0.5f);
+	boxCollider.height = h;
+	boxCollider.width = w;
 	return boxCollider;
 }
 
@@ -30,10 +30,10 @@ bool CircleIntersect(Circle& circleA, Circle& circleB) {
 
 bool AABBIntersect(AABB& boxA, AABB& boxB) {
 	return (
-		boxA.xMax > boxB.xMin && 
-		boxB.xMax > boxA.xMin &&
-		boxA.yMax > boxB.yMin &&
-		boxB.yMax > boxA.yMin);
+		boxA.max.x > boxB.min.x &&
+		boxB.max.x > boxA.min.x &&
+		boxA.max.y > boxB.min.y &&
+		boxB.max.y > boxA.min.y);
 }
 
 
@@ -48,8 +48,8 @@ float Clamp(float a, float min, float max) {
 }
 
 bool AABBCircleIntersect(AABB& box, Circle& circle) {
-	float clampedX = Clamp(circle.position.x, box.xMin, box.xMax);
-	float clampedY = Clamp(circle.position.y, box.yMin, box.yMax);
+	float clampedX = Clamp(circle.position.x, box.min.x, box.max.x);
+	float clampedY = Clamp(circle.position.y, box.min.y, box.max.y);
 
 	float deltaX = circle.position.x - clampedX;
 	float deltaY = circle.position.y - clampedY;
@@ -57,4 +57,12 @@ bool AABBCircleIntersect(AABB& box, Circle& circle) {
 	float distanceSquared = deltaX * deltaX + deltaY * deltaY;
 	float distance = sqrt(distanceSquared);
 	return (distance < circle.radius);
+}
+
+void AABB::SetPosition(Vector2<float> newPosition) {
+	position = newPosition;
+	min.x = position.x - (width * 0.5f);
+	min.y = position.y - (height * 0.5f);
+	max.x = position.x + (width * 0.5f);
+	max.y = position.y + (height * 0.5f);
 }

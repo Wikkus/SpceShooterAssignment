@@ -15,17 +15,22 @@ public:
 	virtual void Init() = 0;
 	virtual void Update() = 0;
 	virtual void Render() = 0;
+	virtual void ExecuteAttack() = 0;
 
 	virtual bool TakeDamage(unsigned int damageAmount) = 0;
 
 	virtual const Circle GetCollider() const = 0;
 	virtual const EnemyType GetEnemyType() const = 0;
+	virtual const float GetAttackDamage() const = 0;
+	virtual const float GetAttackRange() const = 0;
 	virtual const float GetOrientation() const = 0;
 	virtual const int GetCurrentHealth() const = 0;
+	virtual const unsigned int GetID() const = 0;
 	virtual const Sprite* GetSprite() const = 0;
+	virtual const Timer* GetAttackTimer() const = 0;
 	virtual const Vector2<float> GetPosition() const = 0;
 	
-	virtual void ActivateEnemy(float orienation,
+	virtual void ActivateEnemy(float orienation, unsigned int id,
 		Vector2<float> direction, Vector2<float> position) = 0;
 	virtual void DeactivateEnemy() = 0;
 
@@ -38,6 +43,8 @@ protected:
 	
 	int _currentHealth = 0.f;
 	int _maxHealth = 0;
+
+	unsigned int _id = -1;
 
 	Sprite* _sprite = nullptr;
 
