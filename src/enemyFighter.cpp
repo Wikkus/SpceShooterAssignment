@@ -4,6 +4,8 @@
 #include "debugDrawer.h"
 #include "gameEngine.h"
 #include "playerCharacter.h"
+#include "quadTree.h"
+#include "steeringBehaviour.h"
 #include "timerManager.h"
 
 EnemyFighter::EnemyFighter() {
@@ -32,9 +34,8 @@ void EnemyFighter::Init() {
 
 void EnemyFighter::Update() {
 	UpdateTarget();
-	if (!IsInDistance(_position, playerCharacter->GetPosition(), _attackRange * 0.5f)) {
-		UpdateMovement();
-	}
+	_queriedEnemies = enemyQuadTree->QueryTemp(_circleCollider);
+	UpdateMovement();
 }
 
 void EnemyFighter::Render() {
@@ -80,6 +81,10 @@ const Vector2<float> EnemyFighter::GetPosition() const {
 	return _position;
 }
 
+const std::vector<EnemyBase*> EnemyFighter::GetQueriedEnemies() const {
+	return _queriedEnemies;
+}
+
 void EnemyFighter::ActivateEnemy(float orienation, unsigned int id, Vector2<float> direction, Vector2<float> position) {
 	_orientation = orienation;
 	_id = id;
@@ -111,6 +116,9 @@ void EnemyFighter::ExecuteAttack() {
 
 void EnemyFighter::UpdateMovement() {
 	_direction = Vector2<float>(_targetPosition - _position).normalized();
+	
+	_position += separationBehaviour->Steering(this).linearVelocity * deltaTime;
+
 	if (!IsInDistance(_position, playerCharacter->GetPosition(), _attackRange * 0.5f)) {
 		_position += _direction * _movementSpeed * deltaTime;
 		_circleCollider.position = _position;

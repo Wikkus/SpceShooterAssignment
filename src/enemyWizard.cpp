@@ -5,6 +5,8 @@
 #include "gameEngine.h"
 #include "playerCharacter.h"
 #include "projectileManager.h"
+#include "quadTree.h"
+#include "steeringBehaviour.h"
 #include "timerManager.h"
 
 EnemyWizard::EnemyWizard() {
@@ -18,6 +20,7 @@ EnemyWizard::EnemyWizard() {
 	
 	_maxHealth = 20;
 	_currentHealth = _maxHealth;
+
 	_enemyType = EnemyType::EnemyWizard;
 }
 
@@ -36,6 +39,7 @@ void EnemyWizard::Update() {
 	UpdateTarget();
 	UpdateMovement();
 
+	_queriedEnemies = enemyQuadTree->QueryTemp(_circleCollider);
 	if (IsInDistance(_position, playerCharacter->GetPosition(), _attackRange) && _attackTimer->GetTimerFinished()) {
 		ExecuteAttack();
 	}
@@ -85,6 +89,10 @@ const Vector2<float> EnemyWizard::GetPosition() const {
 	return _position;
 }
 
+const std::vector<EnemyBase*> EnemyWizard::GetQueriedEnemies() const {
+	return _queriedEnemies;
+}
+
 void EnemyWizard::ActivateEnemy(float orienation, unsigned int id, Vector2<float> direction, Vector2<float> position) {
 	_orientation = orienation;
 	_id = id;
@@ -116,6 +124,7 @@ void EnemyWizard::ExecuteAttack() {
 
 void EnemyWizard::UpdateMovement() {
 	_direction = Vector2<float>(_targetPosition - _position).normalized();
+	_position += separationBehaviour->Steering(this).linearVelocity * deltaTime;
 	if (!IsInDistance(_position, playerCharacter->GetPosition(), _attackRange * 0.5f)) {
 		_position += _direction * _movementSpeed * deltaTime;
 		_circleCollider.position = _position;

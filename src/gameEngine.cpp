@@ -6,6 +6,7 @@
 #include "imGuiManager.h"
 #include "playerCharacter.h"
 #include "quadTree.h"
+#include "steeringBehaviour.h"
 #include "timerManager.h"
 
 #include <vector>
@@ -21,6 +22,8 @@ ProjectileManager* projectileManager;
 
 QuadTreeTemp<EnemyBase*>* enemyQuadTree;
 QuadTreeTemp<Projectile*>* projectileQuadTree;
+
+SteeringBehaviour* separationBehaviour;
 TimerManager* timerManager;
 
 float windowHeight = 600.f;

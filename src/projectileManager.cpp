@@ -28,25 +28,21 @@ void ProjectileManager::Init() {
 }
 
 void ProjectileManager::Update() {
-	for (unsigned int i = 0; i < _activeEnemyProjectiles.size(); i++) {
-		projectileQuadTree->InsertTemp(_activeEnemyProjectiles[i], _activeEnemyProjectiles[i]->GetCollider());
-		_activeEnemyProjectiles[i]->Update();
-		if (CheckCollision(DamageType::DamagePlayer, i)) {
-			continue;
-		}
-		if (OutOfBorderX(_activeEnemyProjectiles[i]->GetPosition().x) ||
-			OutOfBorderY(_activeEnemyProjectiles[i]->GetPosition().y)) {
-			RemoveProjectile(DamageType::DamagePlayer, i);
-		}
-	}
 	for (unsigned int i = 0; i < _activePlayerProjectiles.size(); i++) {
-		_activePlayerProjectiles[i]->Update();
+		_activePlayerProjectiles[i]->Update();		
 		if (CheckCollision(DamageType::DamageEnemy, i)) {
 			continue;
 		}
 		if (OutOfBorderX(_activePlayerProjectiles[i]->GetPosition().x) ||
 			OutOfBorderY(_activePlayerProjectiles[i]->GetPosition().y)) {
 			RemoveProjectile(DamageType::DamageEnemy, i);
+		}
+	}
+	for (unsigned int i = 0; i < _activeEnemyProjectiles.size(); i++) {
+		_activeEnemyProjectiles[i]->Update();
+		if (OutOfBorderX(_activeEnemyProjectiles[i]->GetPosition().x) ||
+			OutOfBorderY(_activeEnemyProjectiles[i]->GetPosition().y)) {
+			RemoveProjectile(DamageType::DamagePlayer, i);
 		}
 	}
 }
@@ -106,14 +102,6 @@ bool ProjectileManager::CheckCollision(DamageType damageType, unsigned int proje
 			RemoveProjectile(DamageType::DamageEnemy, _activePlayerProjectiles[projectileIndex]->GetProjectileID());
 			return true;
 		}
-	} else if (damageType == DamageType::DamagePlayer) {
-		//_currentCollider = _activeEnemyProjectiles[projectileIndex]->GetCollider();
-		//_intersectedCollider = playerCharacter->GetCircleCollider();
-		//if (CircleIntersect(_currentCollider, _intersectedCollider)) {
-		//	playerCharacter->TakeDamage(_activeEnemyProjectiles[projectileIndex]->GetProjectileDamage());
-		//	RemoveProjectile(damageType, _activeEnemyProjectiles[projectileIndex]->GetProjectileID());
-		//	return true;
-		//}
 	}
 	return false;
 }
@@ -153,4 +141,10 @@ void ProjectileManager::RemoveProjectile(DamageType damageType, unsigned int pro
 
 std::vector<Projectile*> ProjectileManager::GetActiveProjectiles() {
 	return _activePlayerProjectiles;
+}
+
+void ProjectileManager::UpdateQuadTree() {
+	for (unsigned int i = 0; i < _activeEnemyProjectiles.size(); i++) {
+		projectileQuadTree->InsertTemp(_activeEnemyProjectiles[i], _activeEnemyProjectiles[i]->GetCollider());
+	}
 }

@@ -24,7 +24,6 @@ void EnemyManager::Init() {
 void EnemyManager::Update() {
 	for (unsigned i = 0; i < _activeEnemies.size(); i++) {
 		_activeEnemies[i]->Update();
-		enemyQuadTree->InsertTemp(_activeEnemies[i], _activeEnemies[i]->GetCollider());
 	}
 }
 
@@ -74,5 +73,11 @@ void EnemyManager::TakeDamage(unsigned int enemyIndex, unsigned int damageAmount
 	//TakeDamage returns true if the enemy dies
 	if(_activeEnemies[enemyIndex]->TakeDamage(damageAmount)) {
 		DeactivateEnemy(enemyIndex);
+	}
+}
+
+void EnemyManager::UpdateQuadTree() {
+	for (unsigned i = 0; i < _activeEnemies.size(); i++) {
+		enemyQuadTree->InsertTemp(_activeEnemies[i], _activeEnemies[i]->GetCollider());
 	}
 }

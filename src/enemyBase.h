@@ -29,6 +29,7 @@ public:
 	virtual const Sprite* GetSprite() const = 0;
 	virtual const Timer* GetAttackTimer() const = 0;
 	virtual const Vector2<float> GetPosition() const = 0;
+	virtual const std::vector<EnemyBase*> GetQueriedEnemies() const = 0;
 	
 	virtual void ActivateEnemy(float orienation, unsigned int id,
 		Vector2<float> direction, Vector2<float> position) = 0;
@@ -54,5 +55,6 @@ protected:
 	Vector2<float> _targetPosition = Vector2<float>(0.f, 0.f);
 	Vector2<float> _direction = Vector2<float>(0.f, 0.f);
 
+	std::vector<EnemyBase*> _queriedEnemies;
 };
 

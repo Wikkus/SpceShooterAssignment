@@ -25,6 +25,7 @@ public:
 	const Sprite* GetSprite() const override;
 	const Timer* GetAttackTimer() const override;
 	const Vector2<float> GetPosition() const override;
+	const std::vector<EnemyBase*> GetQueriedEnemies() const override;
 
 	void ActivateEnemy(float orienation, unsigned int id, Vector2<float> direction, Vector2<float> position) override;
 	void DeactivateEnemy() override;

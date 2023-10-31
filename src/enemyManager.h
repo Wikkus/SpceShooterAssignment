@@ -10,7 +10,6 @@ enum class EnemyType {
 };
 
 class EnemyBase;
-class EnemyFighter;
 
 class EnemyManager {
 public:
@@ -30,6 +29,8 @@ public:
 	void DeactivateEnemy(unsigned int enemyID);
 
 	void TakeDamage(unsigned int enemyIndex, unsigned int damageAmount);
+
+	void UpdateQuadTree();
 
 private:
 	std::vector<EnemyBase*> _activeEnemies;

@@ -22,6 +22,7 @@
 #include "src/quadTree.h"
 #include "src/sprite.h"
 #include "src/spriteSheet.h"
+#include "src/steeringBehaviour.h"
 #include "src/timerManager.h"
 #include "src/textSprite.h"
 #include "src/vector2.h"
@@ -48,8 +49,10 @@ int main(int argc, char* argv[]) {
 	QuadTreeNode quadTreeNode;
 	quadTreeNode.rectangle = AABB::makeFromPositionSize(
 		Vector2(windowWidth * 0.5f, windowHeight * 0.5f), windowHeight, windowWidth);
-	enemyQuadTree = new QuadTreeTemp<EnemyBase*>(quadTreeNode, 200);
-	projectileQuadTree = new QuadTreeTemp<Projectile*>(quadTreeNode, 200);
+	enemyQuadTree = new QuadTreeTemp<EnemyBase*>(quadTreeNode, 100);
+	projectileQuadTree = new QuadTreeTemp<Projectile*>(quadTreeNode, 100);
+
+	separationBehaviour = new SeparationBehaviour();
 
 	//Init here
 	enemyManager->Init();
@@ -116,29 +119,20 @@ int main(int argc, char* argv[]) {
 				}
 			}
 		}
-
 		//Update here
+		separationBehaviour->UpdateImgui();
+
+		enemyManager->UpdateQuadTree();
+		projectileManager->UpdateQuadTree();
+
 		enemyManager->Update();
 		projectileManager->Update();
-		
 		playerCharacter->Update();
+		
 
 		timerManager->Update();
 
 		if (spawnTimer->GetTimerFinished()) {
-			////Spawn quadtree points test
-			//std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
-			//std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
-			//for (unsigned int i = 0; i < 5; i++) {
-			//	Circle circle;
-			//	circle.position = Vector2<float>(distX(randomEngine), distY(randomEngine));
-			//	//circle.position = Vector2<float>(windowWidth * 0.20f, windowHeight * 0.30f);
-			//	circle.radius = 10.f;
-			//	circleColliders.emplace_back(circle);
-			//	//points.emplace_back(Vector2<float>(windowWidth * 0.20f, windowHeight * 0.30f));
-			//	quadTree->Insert(circleColliders.back());
-			//}
-
 			////Spawn enemies test
 				for (unsigned int i = 0; i < 500; i++) {
 					std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };

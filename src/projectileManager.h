@@ -22,6 +22,8 @@ public:
 	void RemoveAllProjectiles();
 	void RemoveProjectile(DamageType damageType, unsigned int projectileIndex);
 
+	void UpdateQuadTree();
+
 	std::vector<Projectile*> GetActiveProjectiles();
 
 private:

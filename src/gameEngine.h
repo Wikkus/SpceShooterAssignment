@@ -17,6 +17,7 @@ class ImGuiHandler;
 class PlayerCharacter;
 class Projectile;
 class ProjectileManager;
+class SteeringBehaviour;
 template<typename T> class QuadTreeTemp;
 class TimerManager;
 
@@ -29,8 +30,11 @@ extern std::shared_ptr<ImGuiHandler> imGuiHandler;
 extern PlayerCharacter* playerCharacter;
 extern ProjectileManager* projectileManager;
 
+extern SteeringBehaviour* separationBehaviour;
+
 extern QuadTreeTemp<EnemyBase*>* enemyQuadTree;
 extern QuadTreeTemp<Projectile*>* projectileQuadTree;
+
 extern TimerManager* timerManager;
 
 extern float windowHeight;
