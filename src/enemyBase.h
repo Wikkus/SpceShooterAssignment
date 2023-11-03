@@ -8,7 +8,7 @@ class Timer;
 
 class EnemyBase {
 public:
-	EnemyBase() {}
+	EnemyBase(unsigned int enemyId) {}
 	~EnemyBase() {}
 
 
@@ -25,14 +25,13 @@ public:
 	virtual const float GetAttackRange() const = 0;
 	virtual const float GetOrientation() const = 0;
 	virtual const int GetCurrentHealth() const = 0;
-	virtual const unsigned int GetID() const = 0;
+	virtual const unsigned int GetEnemyID() const = 0;
 	virtual const Sprite* GetSprite() const = 0;
-	virtual const Timer* GetAttackTimer() const = 0;
+	virtual const std::shared_ptr<Timer> GetAttackTimer() const = 0;
 	virtual const Vector2<float> GetPosition() const = 0;
 	virtual const std::vector<EnemyBase*> GetQueriedEnemies() const = 0;
 	
-	virtual void ActivateEnemy(float orienation, unsigned int id,
-		Vector2<float> direction, Vector2<float> position) = 0;
+	virtual void ActivateEnemy(float orienation, Vector2<float> direction, Vector2<float> position) = 0;
 	virtual void DeactivateEnemy() = 0;
 
 protected:
@@ -49,7 +48,7 @@ protected:
 
 	Sprite* _sprite = nullptr;
 
-	Timer* _attackTimer = nullptr;
+	std::shared_ptr<Timer> _attackTimer = nullptr;
 
 	Vector2<float> _position = Vector2<float>(-10000.f, -10000.f);
 	Vector2<float> _targetPosition = Vector2<float>(0.f, 0.f);

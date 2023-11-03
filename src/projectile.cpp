@@ -5,25 +5,26 @@
 #include "enemyManager.h"
 #include "gameEngine.h"
 
-Projectile::Projectile(DamageType damageType, unsigned int projectileID) {
+Projectile::Projectile(DamageType damageType, unsigned int projectileDamage, unsigned int projectileID) {
 	_projectileSprite = new Sprite();
 	if (damageType == DamageType::DamageEnemy) {
 		_projectileSprite->Load("res/sprites/Fireball.png");
 
 	} else if (damageType == DamageType::DamagePlayer) {
 		_projectileSprite->Load("res/sprites/Arcaneball.png");
-
 	}
 	_damageType = damageType;
-	_projectileID = projectileID;
-
-	_projectileDamage = 0;	
+	_projectileDamage = projectileDamage;
+	_projectileID = projectileID;	
 
 	_circleCollider.radius = 8.f;
 	_circleCollider.position = _position;
 }
 
-Projectile::~Projectile() {}
+Projectile::~Projectile() {
+	_projectileSprite = nullptr;
+	delete _projectileSprite;
+}
 
 void Projectile::Init() {}
 

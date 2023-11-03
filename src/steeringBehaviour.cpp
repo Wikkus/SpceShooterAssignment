@@ -12,7 +12,7 @@ SteeringOutput SeparationBehaviour::Steering(EnemyBase* enemyData) {
 	_strength = 0.f;
 
 	for (unsigned int i = 0; i < enemyData->GetQueriedEnemies().size(); i++) {
-		if (enemyData->GetID() == enemyData->GetQueriedEnemies()[i]->GetID()) {
+		if (enemyData->GetEnemyID() == enemyData->GetQueriedEnemies()[i]->GetEnemyID()) {
 			continue;
 		}
 		_targetPosition = enemyData->GetQueriedEnemies()[i]->GetPosition();
@@ -28,7 +28,7 @@ SteeringOutput SeparationBehaviour::Steering(EnemyBase* enemyData) {
 }
 
 void SeparationBehaviour::UpdateImgui() {
-	//imGuiHandler->InputFloat("SeparationBehavior", "Decay", _decayCoefficient);
-	//imGuiHandler->InputFloat("SeparationBehavior", "Acceleration", _maxAcceleration);
-	//imGuiHandler->InputFloat("SeparationBehavior", "Threshold", _separationThreshold);
+	imGuiHandler->InputFloat("SeparationBehavior", "Decay", _decayCoefficient);
+	imGuiHandler->InputFloat("SeparationBehavior", "Acceleration", _maxAcceleration);
+	imGuiHandler->InputFloat("SeparationBehavior", "Threshold", _separationThreshold);
 }

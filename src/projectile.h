@@ -11,18 +11,19 @@ enum class DamageType {
 
 class Projectile {
 public:
-	Projectile(DamageType damageType, unsigned int projectileID);
+	Projectile(DamageType damageType, unsigned int projectileDamage, unsigned int projectileID);
 	~Projectile();
 
 	void Init();
 	void Update();
 	void Render();
-
+	
 	const Circle GetCollider() const;
 	const DamageType GetDamageType() const;
 	const unsigned int GetProjectileID() const;
 	const unsigned int GetProjectileDamage() const;
 	
+
 	float GetOrientation(); 
 	Sprite* GetSprite();
 	Vector2<float> GetPosition();

@@ -13,14 +13,12 @@ void TimerManager::Update() {
 }
 
 void TimerManager::RemoveTimer(unsigned int timerIndex) {
-	_timers[timerIndex] = nullptr;
-	delete _timers[timerIndex];
 	std::swap(_timers[timerIndex], _timers.back());
 	_timers.pop_back();
 }
 
-Timer* TimerManager::CreateTimer(float timeInSeconds) {
-	Timer* timer = new Timer(timeInSeconds);
+std::shared_ptr<Timer> TimerManager::CreateTimer(float timeInSeconds) {
+	std::shared_ptr<Timer> timer = std::make_shared<Timer>(timeInSeconds);
 	_timers.emplace_back(timer);
 	return timer;
 }

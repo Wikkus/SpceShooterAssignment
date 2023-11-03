@@ -9,7 +9,9 @@
 #include "steeringBehaviour.h"
 #include "timerManager.h"
 
-EnemyWizard::EnemyWizard() {
+EnemyWizard::EnemyWizard(unsigned int enemyID) : EnemyBase(enemyID) {
+	_id = enemyID;
+
 	_sprite = new Sprite();
 	_sprite->Load("res/sprites/CoralineDadWizard.png");
 
@@ -20,11 +22,13 @@ EnemyWizard::EnemyWizard() {
 	
 	_maxHealth = 20;
 	_currentHealth = _maxHealth;
-
 	_enemyType = EnemyType::EnemyWizard;
 }
 
-EnemyWizard::~EnemyWizard() {}
+EnemyWizard::~EnemyWizard() {
+	_sprite = nullptr;
+	delete _sprite;
+}
 
 void EnemyWizard::Init() {
 	_targetPosition = playerCharacter->GetPosition();
@@ -73,7 +77,7 @@ const int EnemyWizard::GetCurrentHealth() const {
 	return _currentHealth;
 }
 
-const unsigned int EnemyWizard::GetID() const {
+const unsigned int EnemyWizard::GetEnemyID() const {
 	return _id;
 }
 
@@ -81,7 +85,7 @@ const Sprite* EnemyWizard::GetSprite() const {
 	return _sprite;
 }
 
-const Timer* EnemyWizard::GetAttackTimer() const {
+const std::shared_ptr<Timer> EnemyWizard::GetAttackTimer() const {
 	return _attackTimer;
 }
 
@@ -93,9 +97,8 @@ const std::vector<EnemyBase*> EnemyWizard::GetQueriedEnemies() const {
 	return _queriedEnemies;
 }
 
-void EnemyWizard::ActivateEnemy(float orienation, unsigned int id, Vector2<float> direction, Vector2<float> position) {
+void EnemyWizard::ActivateEnemy(float orienation, Vector2<float> direction, Vector2<float> position) {
 	_orientation = orienation;
-	_id = id;
 	_direction = direction;
 	_position = position;
 	_circleCollider.position = position;

@@ -12,7 +12,7 @@
 #include <string>
 
 PlayerCharacter::PlayerCharacter(const char* spritePath, float characterOrientation, Vector2<float> characterPosition) {
-	_characterSprite = new Sprite();	
+	_characterSprite = new Sprite();
 	_characterSprite->Load(spritePath);
 
 	_orientation = characterOrientation;
@@ -38,16 +38,16 @@ PlayerCharacter::~PlayerCharacter() {
 
 void PlayerCharacter::Init() {
 	_healthTextSprite->Init("res/roboto.ttf", 24, std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
-	_attackTimer = timerManager->CreateTimer(0.1f);
+	_attackTimer = timerManager->CreateTimer(0.05f);
+	_regenerationTimer = timerManager->CreateTimer(0.5f);
 }
 
 void PlayerCharacter::Update() {
 	UpdateCollision();
+	UpdateHealthRegen();
 	UpdateInput();
 	UpdateMovement();
 	UpdateTarget();
-
-
 }
 
 void PlayerCharacter::Render() {
@@ -59,7 +59,7 @@ void PlayerCharacter::RenderText() {
 }
 
 void PlayerCharacter::TakeDamage(unsigned int damageAmount) {
-	//_currentHealth -= damageAmount;
+	_currentHealth -= damageAmount;
 	
 	_healthTextSprite->ChangeText(std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
 	if (_currentHealth <= 0) {
@@ -71,11 +71,11 @@ void PlayerCharacter::ExecuteDeath() {
 	_position = Vector2<float>(windowWidth * 0.5f, windowHeight * 0.5f);
 	_orientation = 0.f;
 
+	enemyManager->RemoveAllEnemies();
+	projectileManager->RemoveAllProjectiles();
+
 	_currentHealth = _maxHealth;
 	_healthTextSprite->ChangeText(std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
-
-	enemyManager->DeactivateAllEnemies();
-	projectileManager->RemoveAllProjectiles();
 }
 
 void PlayerCharacter::FireProjectile() {	
@@ -83,7 +83,7 @@ void PlayerCharacter::FireProjectile() {
 }
 
 void PlayerCharacter::UpdateCollision() {
-	std::vector<EnemyBase*> enemies = enemyQuadTree->QueryTemp(playerCharacter->GetCircleCollider());
+	std::vector<EnemyBase*> enemies = enemyQuadTree->QueryTemp(_circleCollider);
 	for (unsigned int i = 0; i < enemies.size(); i++) {
 		if (enemies[i]->GetEnemyType() != EnemyType::EnemyFighter) {
 			continue;
@@ -93,10 +93,23 @@ void PlayerCharacter::UpdateCollision() {
 			enemies[i]->ExecuteAttack();
 		}
 	}
-	std::vector<Projectile*> porjectilesHit = projectileQuadTree->QueryTemp(playerCharacter->GetCircleCollider());
+	std::vector<Projectile*> porjectilesHit = projectileQuadTree->QueryTemp(_circleCollider);
 	for (unsigned int i = 0; i < porjectilesHit.size(); i++) {
-		playerCharacter->TakeDamage(porjectilesHit[i]->GetProjectileDamage());
+		TakeDamage(porjectilesHit[i]->GetProjectileDamage());
 		projectileManager->RemoveProjectile(DamageType::DamagePlayer, porjectilesHit[i]->GetProjectileID());
+	}
+}
+
+void PlayerCharacter::UpdateHealthRegen() {
+	if (_currentHealth < _maxHealth) {
+		if (_regenerationTimer->GetTimerFinished()) {
+			_currentHealth += 1;
+			if (_currentHealth > _maxHealth) {
+				_currentHealth = _maxHealth;
+			}
+			_healthTextSprite->ChangeText(std::to_string(_currentHealth).c_str(), { 255, 255, 255, 255 });
+			_regenerationTimer->ResetTimer();
+		}
 	}
 }
 

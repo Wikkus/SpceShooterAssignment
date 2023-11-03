@@ -1,6 +1,7 @@
 #pragma once
 #include "timer.h"
 
+#include <memory>
 #include <vector>
 
 class TimerManager {
@@ -11,9 +12,9 @@ public:
 	void Update();
 	
 	void RemoveTimer(unsigned int timerIndex);
-
-	Timer* CreateTimer(float timeInSeconds);
+	
+	std::shared_ptr<Timer> CreateTimer(float timeInSeconds);
 
 private:
-	std::vector<Timer*> _timers;
+	std::vector<std::shared_ptr<Timer>> _timers;
 };

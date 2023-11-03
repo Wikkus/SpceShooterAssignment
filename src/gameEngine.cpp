@@ -14,17 +14,18 @@
 SDL_Window* window;
 SDL_Renderer* renderer;
 
-EnemyManager* enemyManager;
+std::shared_ptr<EnemyManager> enemyManager;
 std::shared_ptr<DebugDrawer> debugDrawer;
 std::shared_ptr<ImGuiHandler> imGuiHandler;
-PlayerCharacter* playerCharacter;
-ProjectileManager* projectileManager;
+std::shared_ptr<PlayerCharacter> playerCharacter;
+
+std::shared_ptr<ProjectileManager> projectileManager;
 
 QuadTreeTemp<EnemyBase*>* enemyQuadTree;
 QuadTreeTemp<Projectile*>* projectileQuadTree;
 
-SteeringBehaviour* separationBehaviour;
-TimerManager* timerManager;
+std::shared_ptr<SteeringBehaviour> separationBehaviour;
+std::shared_ptr<TimerManager> timerManager;
 
 float windowHeight = 600.f;
 float windowWidth = 800.f;

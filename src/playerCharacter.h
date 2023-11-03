@@ -34,6 +34,7 @@ public:
 
 private:
 	void UpdateCollision();
+	void UpdateHealthRegen();
 	void UpdateInput();
 	void UpdateMovement();
 	void UpdateTarget();
@@ -42,7 +43,7 @@ private:
 	const float _attackDamage = 10;
 	const float _movementSpeed = 100.f;
 
-	const int _maxHealth = 100;
+	const int _maxHealth = 1000;
 
 	float _orientation = 0.f;
 
@@ -51,7 +52,8 @@ private:
 	Sprite* _characterSprite = nullptr;
 	TextSprite* _healthTextSprite = nullptr;
 
-	Timer* _attackTimer = nullptr;
+	std::shared_ptr<Timer> _attackTimer = nullptr;
+	std::shared_ptr<Timer> _regenerationTimer = nullptr;
 
 	Vector2<float> _position = Vector2<float>(0.f, 0.f);
 	Vector2<float> _oldPosition = Vector2<float>(0.f, 0.f);

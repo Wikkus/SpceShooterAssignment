@@ -38,29 +38,28 @@ int main(int argc, char* argv[]) {
 	window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);	
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-	enemyManager = new EnemyManager();
+	enemyManager = std::make_shared<EnemyManager>();
 	debugDrawer = std::make_shared<DebugDrawer>();
 	imGuiHandler = std::make_shared<ImGuiHandler>();
-	projectileManager = new ProjectileManager();
-	playerCharacter = new PlayerCharacter("res/sprites/CoralineDadKing.png", 
+	projectileManager = std::make_shared<ProjectileManager>();
+	playerCharacter = std::make_shared<PlayerCharacter>("res/sprites/CoralineDadKing.png",
 		0.f, Vector2<float>(windowWidth * 0.5f, windowHeight * 0.5f));
-	timerManager = new TimerManager();
+
+	timerManager = std::make_shared<TimerManager>();
 
 	QuadTreeNode quadTreeNode;
 	quadTreeNode.rectangle = AABB::makeFromPositionSize(
 		Vector2(windowWidth * 0.5f, windowHeight * 0.5f), windowHeight, windowWidth);
-	enemyQuadTree = new QuadTreeTemp<EnemyBase*>(quadTreeNode, 100);
-	projectileQuadTree = new QuadTreeTemp<Projectile*>(quadTreeNode, 100);
+	enemyQuadTree = new QuadTreeTemp<EnemyBase*>(quadTreeNode, 50);
+	projectileQuadTree = new QuadTreeTemp<Projectile*>(quadTreeNode, 50);
 
-	separationBehaviour = new SeparationBehaviour();
+	separationBehaviour = std::make_shared<SeparationBehaviour>();
 
 	//Init here
 	enemyManager->Init();
 	imGuiHandler->Init();
 	playerCharacter->Init();
 	projectileManager->Init();
-
-	Timer* spawnTimer = timerManager->CreateTimer(0.25f);
 
 	TextSprite* fpsText = new TextSprite();
 	fpsText->Init("res/roboto.ttf", 24, std::to_string(0).c_str(), { 255, 255, 255,255});
@@ -120,30 +119,13 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		//Update here
-		separationBehaviour->UpdateImgui();
-
 		enemyManager->UpdateQuadTree();
 		projectileManager->UpdateQuadTree();
 
 		enemyManager->Update();
 		projectileManager->Update();
 		playerCharacter->Update();
-		
-
 		timerManager->Update();
-
-		if (spawnTimer->GetTimerFinished()) {
-			////Spawn enemies test
-				for (unsigned int i = 0; i < 500; i++) {
-					std::uniform_real_distribution<float> distX{ 10.f, windowWidth - 10.f };
-					std::uniform_real_distribution<float> distY{ 10.f, windowHeight - 10.f };
-					enemyManager->CreateEnemy(EnemyType::EnemyFighter, 0.f, 
-						Vector2<float>(0.f, 0.f), Vector2<float>(distX(randomEngine), distY(randomEngine)));
-					
-				}
-			//spawnTimer->ResetTimer();
-			spawnTimer->DeactivateTimer();
-		}
 
 		SDL_SetRenderDrawColor(renderer, 0, 125, 0, 255);
 		SDL_RenderClear(renderer);
@@ -151,10 +133,7 @@ int main(int argc, char* argv[]) {
 		//Render images here
 		enemyManager->Render();
 		playerCharacter->Render();
-		projectileManager->Render();	
-
-		enemyQuadTree->RenderTemp();
-		//projectileQuadTree->RenderTemp();
+		projectileManager->Render();
 
 		enemyQuadTree->ClearTemp();
 		projectileQuadTree->ClearTemp();
@@ -173,12 +152,6 @@ int main(int argc, char* argv[]) {
 		SDL_RenderPresent(renderer);
 		SDL_Delay(16);
 	}
-	playerCharacter = nullptr;
-	delete playerCharacter;
-
-	projectileManager = nullptr;
-	delete projectileManager;
-	
 	imGuiHandler->ShutDown();
 	SDL_DestroyWindow(window);
 	SDL_Quit();

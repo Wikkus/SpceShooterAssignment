@@ -8,7 +8,9 @@
 #include "steeringBehaviour.h"
 #include "timerManager.h"
 
-EnemyFighter::EnemyFighter() {
+EnemyFighter::EnemyFighter(unsigned int enemyID) : EnemyBase(enemyID) {
+	_id = enemyID;
+	
 	_sprite = new Sprite();
 	_sprite->Load("res/sprites/CoralineDadFighter.png");
 
@@ -23,7 +25,10 @@ EnemyFighter::EnemyFighter() {
 	_enemyType = EnemyType::EnemyFighter;
 }
 
-EnemyFighter::~EnemyFighter() {}
+EnemyFighter::~EnemyFighter() {
+	_sprite = nullptr;
+	delete _sprite;
+}
 
 void EnemyFighter::Init() {
 	_targetPosition = playerCharacter->GetPosition();
@@ -50,7 +55,7 @@ const EnemyType EnemyFighter::GetEnemyType() const {
 	return _enemyType;
 }
 
-const Timer* EnemyFighter::GetAttackTimer() const {	return _attackTimer;
+const std::shared_ptr<Timer> EnemyFighter::GetAttackTimer() const {	return _attackTimer;
 }
 
 const float EnemyFighter::GetAttackDamage() const {
@@ -69,7 +74,7 @@ const int EnemyFighter::GetCurrentHealth() const {
 	return _currentHealth;
 }
 
-const unsigned int EnemyFighter::GetID() const {
+const unsigned int EnemyFighter::GetEnemyID() const {
 	return _id;
 }
 
@@ -85,9 +90,8 @@ const std::vector<EnemyBase*> EnemyFighter::GetQueriedEnemies() const {
 	return _queriedEnemies;
 }
 
-void EnemyFighter::ActivateEnemy(float orienation, unsigned int id, Vector2<float> direction, Vector2<float> position) {
+void EnemyFighter::ActivateEnemy(float orienation, Vector2<float> direction, Vector2<float> position) {
 	_orientation = orienation;
-	_id = id;
 	_direction = direction;
 	_position = position;
 	_circleCollider.position = _position;
